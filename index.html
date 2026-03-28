@@ -15,7 +15,7 @@
 <section class="hero">
   <div class="hero-bg"></div>
   <div class="container">
-    <p class="venue-badge">ACL 2026</p>
+    <p class="venue-badge">Preprint 2026</p>
     <h1 class="hero-title">Full-Duplex-Bench-v3</h1>
     <p class="hero-subtitle">Benchmarking Spoken Language Models on<br/>In-the-Wild Speech &amp; Multi-Step Tool Calling</p>
     <p class="authors">
@@ -72,13 +72,16 @@
   </div>
 </section>
 
-<!-- ===================== RADAR CHARTS ===================== -->
+<!-- ===================== RADAR CHART ===================== -->
 <section id="radar" class="section">
   <div class="container">
     <h2 class="section-title">Model Comparison</h2>
-    <p class="section-desc">Radar charts showing each model's performance profile across 6 dimensions. Dashed line = mean of all models.</p>
-    <div class="radar-grid" id="radar-grid">
-      <!-- Populated by JS -->
+    <p class="section-desc">Performance profile across 6 dimensions. Click legend to toggle models.</p>
+    <div class="radar-wrapper">
+      <canvas id="radar-canvas"></canvas>
+      <div class="radar-legend" id="radar-legend">
+        <!-- Populated by JS -->
+      </div>
     </div>
   </div>
 </section>
@@ -330,70 +333,6 @@
   </div>
 </section>
 
-<!-- ===================== KEY FINDINGS ===================== -->
-<section id="findings" class="section">
-  <div class="container narrow">
-    <h2 class="section-title">Key Findings</h2>
-    <div class="findings-list">
-      <div class="finding">
-        <div class="finding-number">01</div>
-        <div class="finding-content">
-          <h4>No Single Winner</h4>
-          <p>GPT-Realtime leads on accuracy (Pass@1: 0.525), Gemini 2.5 Live on latency (5.68s), and Gemini 3.1 Live on turn-taking discipline (15.0% interruption, 99.0% turn-take rate).</p>
-        </div>
-      </div>
-      <div class="finding">
-        <div class="finding-number">02</div>
-        <div class="finding-content">
-          <h4>Self-Corrections Break Everyone</h4>
-          <p>Even the best model succeeds on only 52.9% of self-correction scenarios. Dynamic state rollback remains the most consistent cross-system failure mode.</p>
-        </div>
-      </div>
-      <div class="finding">
-        <div class="finding-number">03</div>
-        <div class="finding-content">
-          <h4>Accuracy&ndash;Latency Frontier</h4>
-          <p>Gemini 2.5 Live is Pareto-optimal for latency-sensitive deployments. GPT-Realtime occupies the high-accuracy, moderate-latency region.</p>
-        </div>
-      </div>
-      <div class="finding">
-        <div class="finding-number">04</div>
-        <div class="finding-content">
-          <h4>Ultravox: Promising Open Contender</h4>
-          <p>Matches proprietary models on tool selection (0.814) with a perfect turn-take rate (100%), but its 9.34s latency is the highest among all systems.</p>
-        </div>
-      </div>
-      <div class="finding">
-        <div class="finding-number">05</div>
-        <div class="finding-content">
-          <h4>Housing Is Universally Hard</h4>
-          <p>No model exceeds 0.308 Pass@1 on Housing tasks, while Finance reaches 0.840&mdash;a 2.7x gap highlighting domain-specific challenges.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ===================== CITATION ===================== -->
-<section id="citation" class="section section-alt">
-  <div class="container narrow">
-    <h2 class="section-title">Citation</h2>
-    <div class="citation-block">
-      <button class="copy-btn" id="copy-btn" title="Copy to clipboard">&#128203; Copy</button>
-      <pre><code id="bibtex">@inproceedings{lin2026fullduplexbenchv3,
-  title     = {Full-Duplex-Bench-v3: Benchmarking Spoken Language
-               Models on In-the-Wild Speech and Multi-Step
-               Tool Calling},
-  author    = {Lin, Guan-Ting and Chen, Chen and
-               Chen, Zhehuai and Lee, Hung-yi},
-  booktitle = {Proceedings of the 64th Annual Meeting of the
-               Association for Computational Linguistics (ACL)},
-  year      = {2026}
-}</code></pre>
-    </div>
-  </div>
-</section>
-
 <!-- ===================== FOOTER ===================== -->
 <footer class="footer">
   <div class="container">
@@ -409,8 +348,6 @@
   <a href="#results">Results</a>
   <a href="#analysis">Analysis</a>
   <a href="#demos">Demos</a>
-  <a href="#findings">Findings</a>
-  <a href="#citation">Cite</a>
 </nav>
 
 <script src="script.js"></script>

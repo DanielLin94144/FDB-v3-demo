@@ -123,41 +123,31 @@ const PROVIDERS = [
 ];
 
 // ===================== RADAR DATA =====================
-// Axes: Tool Sel, Arg Acc, Pass@1, Turn-Take, Latency (inverted: 1 - val/10), Interrupt (inverted: 1 - val)
 const RADAR_AXES = ['Tool Sel', 'Arg Acc', 'Pass@1', 'Turn-Take', 'Latency', 'Interrupt'];
 
 const RADAR_RAW = [
-  // [ToolSel, ArgAcc, Pass@1, TurnTake%, Latency_s, Interrupt%]
-  { name: 'GPT-Realtime',  vals: [0.818, 0.597, 0.525, 0.960, 6.72, 0.206] },
+  { name: 'GPT-Realtime',    vals: [0.818, 0.597, 0.525, 0.960, 6.72, 0.206] },
   { name: 'Gemini 2.5 Live', vals: [0.801, 0.553, 0.446, 0.941, 5.68, 0.200] },
   { name: 'Gemini 3.1 Live', vals: [0.810, 0.594, 0.485, 0.990, 7.56, 0.150] },
-  { name: 'Nova Sonic 2',  vals: [0.725, 0.493, 0.356, 0.921, 8.24, 0.226] },
-  { name: 'Grok',          vals: [0.695, 0.474, 0.376, 0.861, 8.10, 0.161] },
-  { name: 'Ultravox',      vals: [0.814, 0.592, 0.485, 1.000, 9.34, 0.228] },
-  { name: 'Cascaded',      vals: [0.736, 0.483, 0.406, 0.931, 8.84, 0.277] },
+  { name: 'Nova Sonic 2',    vals: [0.725, 0.493, 0.356, 0.921, 8.24, 0.226] },
+  { name: 'Grok',            vals: [0.695, 0.474, 0.376, 0.861, 8.10, 0.161] },
+  { name: 'Ultravox',        vals: [0.814, 0.592, 0.485, 1.000, 9.34, 0.228] },
+  { name: 'Cascaded',        vals: [0.736, 0.483, 0.406, 0.931, 8.84, 0.277] },
 ];
 
-const RADAR_DISPLAY = [
-  // Display values for the value labels below each radar
-  (v) => v.toFixed(3),  // Tool Sel
-  (v) => v.toFixed(3),  // Arg Acc
-  (v) => v.toFixed(3),  // Pass@1
-  (v) => (v * 100).toFixed(1) + '%', // Turn-Take
-  (v) => v.toFixed(2) + 's',        // Latency
-  (v) => (v * 100).toFixed(1) + '%', // Interrupt
-];
-
-// Normalize to 0-1 for radar plotting
 function normalizeRadar(vals) {
   return [
-    vals[0],              // Tool Sel: already 0-1
-    vals[1],              // Arg Acc: already 0-1
-    vals[2],              // Pass@1: already 0-1
-    vals[3],              // Turn-Take: already 0-1
-    1 - (vals[4] / 12),   // Latency: invert, lower is better (max ~10s)
-    1 - vals[5],          // Interrupt: invert, lower is better
+    vals[0],
+    vals[1],
+    vals[2],
+    vals[3],
+    1 - (vals[4] / 12),
+    1 - vals[5],
   ];
 }
+
+// Track which models are visible
+let radarVisible = [true, true, true, true, true, true, true];
 
 // ===================== CHART RENDERING =====================
 function renderGroupedBarChart(containerId, data, maxValue, isLatency = false) {
@@ -208,9 +198,19 @@ function renderGroupedBarChart(containerId, data, maxValue, isLatency = false) {
 }
 
 // ===================== RADAR CHART RENDERING =====================
-function drawRadarChart(canvas, modelIdx, modelColor) {
+function hexToRgb(hex) {
+  const r = parseInt(hex.slice(1,3),16);
+  const g = parseInt(hex.slice(3,5),16);
+  const b = parseInt(hex.slice(5,7),16);
+  return { r, g, b };
+}
+
+function drawCombinedRadar() {
+  const canvas = document.getElementById('radar-canvas');
+  if (!canvas) return;
+
   const dpr = window.devicePixelRatio || 1;
-  const size = 280;
+  const size = 680;
   canvas.width = size * dpr;
   canvas.height = size * dpr;
   canvas.style.width = size + 'px';
@@ -218,10 +218,11 @@ function drawRadarChart(canvas, modelIdx, modelColor) {
 
   const ctx = canvas.getContext('2d');
   ctx.scale(dpr, dpr);
+  ctx.clearRect(0, 0, size, size);
 
   const cx = size / 2;
   const cy = size / 2;
-  const R = 100;
+  const R = 240;
   const n = RADAR_AXES.length;
   const angleStep = (2 * Math.PI) / n;
   const startAngle = -Math.PI / 2;
@@ -231,7 +232,7 @@ function drawRadarChart(canvas, modelIdx, modelColor) {
     return { x: cx + r * Math.cos(angle), y: cy + r * Math.sin(angle) };
   }
 
-  // Draw grid rings
+  // Grid rings
   for (let ring = 1; ring <= 5; ring++) {
     const r = (ring / 5) * R;
     ctx.beginPath();
@@ -241,121 +242,118 @@ function drawRadarChart(canvas, modelIdx, modelColor) {
       else ctx.lineTo(p.x, p.y);
     }
     ctx.closePath();
-    ctx.strokeStyle = '#e2e8f0';
-    ctx.lineWidth = 0.8;
+    ctx.strokeStyle = ring === 5 ? '#cbd5e1' : '#e9edf2';
+    ctx.lineWidth = 1;
     ctx.stroke();
+
+    // Scale labels on first spoke
+    if (ring < 5) {
+      const p = getPoint(0, r);
+      ctx.font = '400 11px Inter, sans-serif';
+      ctx.fillStyle = '#b0b8c4';
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'bottom';
+      ctx.fillText((ring * 0.2).toFixed(1), p.x + 4, p.y - 2);
+    }
   }
 
-  // Draw spokes
+  // Spokes
   for (let i = 0; i < n; i++) {
     const p = getPoint(i, R);
     ctx.beginPath();
     ctx.moveTo(cx, cy);
     ctx.lineTo(p.x, p.y);
     ctx.strokeStyle = '#e2e8f0';
-    ctx.lineWidth = 0.8;
+    ctx.lineWidth = 1;
     ctx.stroke();
   }
 
-  // Draw axis labels
-  ctx.font = '500 10px Inter, sans-serif';
-  ctx.fillStyle = '#64748b';
+  // Axis labels
+  ctx.font = '600 14px Inter, sans-serif';
+  ctx.fillStyle = '#334155';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   for (let i = 0; i < n; i++) {
-    const p = getPoint(i, R + 20);
+    const p = getPoint(i, R + 28);
+    // Adjust text alignment based on position
+    if (Math.abs(p.x - cx) < 10) {
+      ctx.textAlign = 'center';
+    } else if (p.x > cx) {
+      ctx.textAlign = 'left';
+    } else {
+      ctx.textAlign = 'right';
+    }
     ctx.fillText(RADAR_AXES[i], p.x, p.y);
   }
+  ctx.textAlign = 'center';
 
-  // Compute mean of all models (normalized)
-  const meanNorm = new Array(n).fill(0);
-  RADAR_RAW.forEach(m => {
-    const nv = normalizeRadar(m.vals);
-    nv.forEach((v, i) => meanNorm[i] += v);
-  });
-  meanNorm.forEach((_, i) => meanNorm[i] /= RADAR_RAW.length);
+  // Draw each visible model
+  const colors = MODELS.map(m => m.color);
 
-  // Draw mean polygon (dashed)
-  ctx.beginPath();
-  for (let i = 0; i <= n; i++) {
-    const r = meanNorm[i % n] * R;
-    const p = getPoint(i % n, r);
-    if (i === 0) ctx.moveTo(p.x, p.y);
-    else ctx.lineTo(p.x, p.y);
-  }
-  ctx.closePath();
-  ctx.setLineDash([4, 4]);
-  ctx.strokeStyle = '#94a3b8';
-  ctx.lineWidth = 1.2;
-  ctx.stroke();
-  ctx.setLineDash([]);
+  RADAR_RAW.forEach((model, mi) => {
+    if (!radarVisible[mi]) return;
 
-  // Draw model polygon
-  const normVals = normalizeRadar(RADAR_RAW[modelIdx].vals);
-  ctx.beginPath();
-  for (let i = 0; i <= n; i++) {
-    const r = normVals[i % n] * R;
-    const p = getPoint(i % n, r);
-    if (i === 0) ctx.moveTo(p.x, p.y);
-    else ctx.lineTo(p.x, p.y);
-  }
-  ctx.closePath();
+    const normVals = normalizeRadar(model.vals);
 
-  // Fill
-  const hex = modelColor;
-  const r2 = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
-  ctx.fillStyle = `rgba(${r2},${g},${b},0.25)`;
-  ctx.fill();
-
-  // Stroke
-  ctx.strokeStyle = modelColor;
-  ctx.lineWidth = 2;
-  ctx.stroke();
-
-  // Draw dots on vertices
-  for (let i = 0; i < n; i++) {
-    const rv = normVals[i] * R;
-    const p = getPoint(i, rv);
+    // Fill
     ctx.beginPath();
-    ctx.arc(p.x, p.y, 3, 0, 2 * Math.PI);
-    ctx.fillStyle = modelColor;
+    for (let i = 0; i <= n; i++) {
+      const r = normVals[i % n] * R;
+      const p = getPoint(i % n, r);
+      if (i === 0) ctx.moveTo(p.x, p.y);
+      else ctx.lineTo(p.x, p.y);
+    }
+    ctx.closePath();
+    const rgb = hexToRgb(colors[mi]);
+    ctx.fillStyle = `rgba(${rgb.r},${rgb.g},${rgb.b},0.10)`;
     ctx.fill();
-  }
+
+    // Stroke
+    ctx.beginPath();
+    for (let i = 0; i <= n; i++) {
+      const r = normVals[i % n] * R;
+      const p = getPoint(i % n, r);
+      if (i === 0) ctx.moveTo(p.x, p.y);
+      else ctx.lineTo(p.x, p.y);
+    }
+    ctx.closePath();
+    ctx.strokeStyle = colors[mi];
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+
+    // Dots
+    for (let i = 0; i < n; i++) {
+      const r = normVals[i] * R;
+      const p = getPoint(i, r);
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 4, 0, 2 * Math.PI);
+      ctx.fillStyle = colors[mi];
+      ctx.fill();
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    }
+  });
 }
 
 function initRadarCharts() {
-  const grid = document.getElementById('radar-grid');
-  if (!grid) return;
-  grid.innerHTML = '';
-
-  const colors = MODELS.map(m => m.color);
+  const legend = document.getElementById('radar-legend');
+  if (!legend) return;
+  legend.innerHTML = '';
 
   RADAR_RAW.forEach((model, idx) => {
-    const card = document.createElement('div');
-    card.className = 'radar-card';
-
-    const title = document.createElement('h4');
-    title.textContent = model.name;
-    title.style.color = colors[idx];
-    card.appendChild(title);
-
-    const canvas = document.createElement('canvas');
-    card.appendChild(canvas);
-
-    // Value labels
-    const valsDiv = document.createElement('div');
-    valsDiv.className = 'radar-values';
-    RADAR_AXES.forEach((axis, i) => {
-      const span = document.createElement('span');
-      span.className = 'radar-val';
-      span.innerHTML = `<strong>${axis}</strong> ${RADAR_DISPLAY[i](model.vals[i])}`;
-      valsDiv.appendChild(span);
+    const item = document.createElement('div');
+    item.className = 'radar-legend-item';
+    item.innerHTML = `<span class="radar-legend-dot" style="background:${MODELS[idx].color}"></span>${model.name}`;
+    item.addEventListener('click', () => {
+      radarVisible[idx] = !radarVisible[idx];
+      item.classList.toggle('disabled', !radarVisible[idx]);
+      drawCombinedRadar();
     });
-    card.appendChild(valsDiv);
-
-    grid.appendChild(card);
-    drawRadarChart(canvas, idx, colors[idx]);
+    legend.appendChild(item);
   });
+
+  drawCombinedRadar();
 }
 
 function initCharts() {
