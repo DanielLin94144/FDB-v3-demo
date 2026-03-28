@@ -250,10 +250,61 @@ s { text-decoration: line-through; opacity: 0.5; }
   background: #f1f5f9;
   border-radius: 8px;
   color: #475569;
+  overflow-x: auto;
+  white-space: nowrap;
 }
 .api-list code {
   color: #1e40af;
   font-weight: 500;
+  font-size: 0.78rem;
+}
+
+/* ===================== RADAR CHARTS ===================== */
+.radar-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+.radar-card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 20px 16px 16px;
+  text-align: center;
+  transition: all 0.25s;
+}
+.radar-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.06);
+}
+.radar-card h4 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.radar-card canvas {
+  width: 100% !important;
+  height: auto !important;
+}
+.radar-values {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px 14px;
+  margin-top: 10px;
+}
+.radar-val {
+  font-size: 0.7rem;
+  color: #64748b;
+}
+.radar-val strong {
+  font-weight: 700;
+}
+@media (max-width: 1000px) {
+  .radar-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 560px) {
+  .radar-grid { grid-template-columns: 1fr; }
 }
 
 /* ===================== RESULTS TABLE ===================== */

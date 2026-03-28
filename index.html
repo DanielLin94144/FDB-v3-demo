@@ -29,7 +29,6 @@
       <a href="#" class="btn btn-primary"><span class="btn-icon">&#128196;</span> Paper</a>
       <a href="#" class="btn btn-secondary"><span class="btn-icon">&#128187;</span> Code</a>
       <a href="#" class="btn btn-secondary"><span class="btn-icon">&#128202;</span> Data</a>
-      <a href="#" class="btn btn-secondary"><span class="btn-icon">&#127942;</span> Leaderboard</a>
     </div>
   </div>
 </section>
@@ -73,40 +72,159 @@
   </div>
 </section>
 
-<!-- ===================== OVERVIEW FIGURE ===================== -->
-<section id="overview" class="section">
+<!-- ===================== RADAR CHARTS ===================== -->
+<section id="radar" class="section">
   <div class="container">
-    <h2 class="section-title">Benchmark Overview</h2>
-    <div class="overview-flow">
-      <div class="flow-step">
-        <div class="flow-number">1</div>
-        <h4>Real Speech Input</h4>
-        <p>Human speakers record natural queries with disfluencies (fillers, pauses, hesitations, false starts, self-corrections)</p>
+    <h2 class="section-title">Model Comparison</h2>
+    <p class="section-desc">Radar charts showing each model's performance profile across 6 dimensions. Dashed line = mean of all models.</p>
+    <div class="radar-grid" id="radar-grid">
+      <!-- Populated by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- ===================== RESULTS ===================== -->
+<section id="results" class="section section-alt">
+  <div class="container">
+    <h2 class="section-title">Main Results</h2>
+    <p class="section-desc">Overall performance and turn-taking metrics across all 7 systems. No single model dominates all dimensions.</p>
+
+    <div class="table-wrapper">
+      <table class="results-table">
+        <thead>
+          <tr>
+            <th></th>
+            <th colspan="4" class="group-header">Tool Use</th>
+            <th colspan="3" class="group-header">Turn-Taking Dynamics</th>
+          </tr>
+          <tr>
+            <th>Model</th>
+            <th>Tool Sel &uarr;</th>
+            <th>Arg Acc &uarr;</th>
+            <th>Pass@1 &uarr;</th>
+            <th>Turn-take &uarr;</th>
+            <th>Latency &darr;</th>
+            <th>Interrupt &darr;</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="model-name"><span class="model-dot" style="--dot-color:#e8646a"></span>GPT-Realtime</td>
+            <td class="best">0.818</td>
+            <td class="best">0.597</td>
+            <td class="best">0.525</td>
+            <td>96.0%</td>
+            <td>6.72s</td>
+            <td>20.6%</td>
+          </tr>
+          <tr>
+            <td class="model-name"><span class="model-dot" style="--dot-color:#6ba3d6"></span>Gemini 2.5 Live</td>
+            <td>0.801</td>
+            <td>0.553</td>
+            <td>0.446</td>
+            <td>94.1%</td>
+            <td class="best">5.68s</td>
+            <td>20.0%</td>
+          </tr>
+          <tr>
+            <td class="model-name"><span class="model-dot" style="--dot-color:#4a6fa5"></span>Gemini 3.1 Live</td>
+            <td>0.810</td>
+            <td>0.594</td>
+            <td>0.485</td>
+            <td>99.0%</td>
+            <td>7.56s</td>
+            <td class="best">15.0%</td>
+          </tr>
+          <tr>
+            <td class="model-name"><span class="model-dot" style="--dot-color:#f0a856"></span>Nova Sonic 2</td>
+            <td>0.725</td>
+            <td>0.493</td>
+            <td>0.356</td>
+            <td>92.1%</td>
+            <td>8.24s</td>
+            <td>22.6%</td>
+          </tr>
+          <tr>
+            <td class="model-name"><span class="model-dot" style="--dot-color:#6cc6a4"></span>Grok</td>
+            <td>0.695</td>
+            <td>0.474</td>
+            <td>0.376</td>
+            <td>86.1%</td>
+            <td>8.10s</td>
+            <td>16.1%</td>
+          </tr>
+          <tr>
+            <td class="model-name"><span class="model-dot" style="--dot-color:#9b8ec4"></span>Ultravox</td>
+            <td>0.814</td>
+            <td>0.592</td>
+            <td>0.485</td>
+            <td class="best">100.0%</td>
+            <td>9.34s</td>
+            <td>22.8%</td>
+          </tr>
+          <tr>
+            <td class="model-name"><span class="model-dot" style="--dot-color:#8eccc8"></span>Cascaded</td>
+            <td>0.736</td>
+            <td>0.483</td>
+            <td>0.406</td>
+            <td>93.1%</td>
+            <td>8.84s</td>
+            <td>27.7%</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CHARTS ===================== -->
+<section id="analysis" class="section">
+  <div class="container">
+    <h2 class="section-title">Detailed Analysis</h2>
+
+    <div class="chart-tabs">
+      <button class="tab-btn active" data-tab="difficulty">By Difficulty</button>
+      <button class="tab-btn" data-tab="disfluency">Disfluency Robustness</button>
+      <button class="tab-btn" data-tab="domain">By Domain</button>
+      <button class="tab-btn" data-tab="latency">Latency Breakdown</button>
+    </div>
+
+    <!-- Difficulty Tab -->
+    <div class="tab-content active" id="tab-difficulty">
+      <p class="chart-desc">Pass@1 performance degrades with scenario complexity. GPT-Realtime maintains the lead across all tiers.</p>
+      <div class="bar-chart-container">
+        <div class="bar-chart" id="chart-difficulty"></div>
       </div>
-      <div class="flow-arrow">&rarr;</div>
-      <div class="flow-step">
-        <div class="flow-number">2</div>
-        <h4>Voice Agent Processing</h4>
-        <p>Models receive streaming audio and must reason, call tools, and generate spoken responses in real-time</p>
+    </div>
+
+    <!-- Disfluency Tab -->
+    <div class="tab-content" id="tab-disfluency">
+      <p class="chart-desc">Self-correction remains the hardest disfluency type&mdash;even the best model (Gemini 2.5) succeeds on only 52.9% of rollback scenarios.</p>
+      <div class="bar-chart-container">
+        <div class="bar-chart" id="chart-disfluency"></div>
       </div>
-      <div class="flow-arrow">&rarr;</div>
-      <div class="flow-step">
-        <div class="flow-number">3</div>
-        <h4>Multi-Step Tool Calls</h4>
-        <p>Agents chain API calls across 11 mock functions spanning 4 task domains with deterministic outputs</p>
+    </div>
+
+    <!-- Domain Tab -->
+    <div class="tab-content" id="tab-domain">
+      <p class="chart-desc">Finance is easiest across all models; Housing consistently proves the most challenging domain.</p>
+      <div class="bar-chart-container">
+        <div class="bar-chart" id="chart-domain"></div>
       </div>
-      <div class="flow-arrow">&rarr;</div>
-      <div class="flow-step">
-        <div class="flow-number">4</div>
-        <h4>Multi-Metric Evaluation</h4>
-        <p>Automatic scoring on tool selection, argument accuracy, Pass@1, latency, and turn-taking dynamics</p>
+    </div>
+
+    <!-- Latency Tab -->
+    <div class="tab-content" id="tab-latency">
+      <p class="chart-desc">Latency decomposition reveals where each system bottlenecks: first word, tool call, or task completion.</p>
+      <div class="bar-chart-container">
+        <div class="bar-chart" id="chart-latency"></div>
       </div>
     </div>
   </div>
 </section>
 
 <!-- ===================== TASK DOMAINS ===================== -->
-<section id="domains" class="section section-alt">
+<section id="domains" class="section">
   <div class="container">
     <h2 class="section-title">Task Domains &amp; Mock APIs</h2>
     <div class="domains-grid">
@@ -152,154 +270,6 @@
           <li><code>cancel_pending_action(action_type)</code></li>
           <li><code>process_exchange(order_id, new_shipping_address)</code></li>
         </ul>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ===================== RESULTS ===================== -->
-<section id="results" class="section">
-  <div class="container">
-    <h2 class="section-title">Main Results</h2>
-    <p class="section-desc">Overall performance and turn-taking metrics across all 7 systems. No single model dominates all dimensions.</p>
-
-    <div class="table-wrapper">
-      <table class="results-table">
-        <thead>
-          <tr>
-            <th></th>
-            <th colspan="4" class="group-header">Tool Use</th>
-            <th colspan="3" class="group-header">Turn-Taking Dynamics</th>
-          </tr>
-          <tr>
-            <th>Model</th>
-            <th>Tool Sel &uarr;</th>
-            <th>Arg Acc &uarr;</th>
-            <th>Resp Acc &uarr;</th>
-            <th>Pass@1 &uarr;</th>
-            <th>Take-turn &uarr;</th>
-            <th>Latency &darr;</th>
-            <th>Interrupt &darr;</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="model-name"><span class="model-dot" style="--dot-color:#10a37f"></span>GPT-Realtime</td>
-            <td class="best">0.818</td>
-            <td class="best">0.597</td>
-            <td class="best">0.574</td>
-            <td class="best">0.525</td>
-            <td>96.0%</td>
-            <td>6.72s</td>
-            <td>20.6%</td>
-          </tr>
-          <tr>
-            <td class="model-name"><span class="model-dot" style="--dot-color:#4285f4"></span>Gemini 2.5 Live</td>
-            <td>0.801</td>
-            <td>0.553</td>
-            <td>0.564</td>
-            <td>0.446</td>
-            <td>94.1%</td>
-            <td class="best">5.68s</td>
-            <td>20.0%</td>
-          </tr>
-          <tr>
-            <td class="model-name"><span class="model-dot" style="--dot-color:#1a73e8"></span>Gemini 3.1 Live</td>
-            <td>0.810</td>
-            <td>0.594</td>
-            <td>0.560</td>
-            <td>0.485</td>
-            <td>99.0%</td>
-            <td>7.56s</td>
-            <td class="best">15.0%</td>
-          </tr>
-          <tr>
-            <td class="model-name"><span class="model-dot" style="--dot-color:#ff6600"></span>Nova Sonic 2</td>
-            <td>0.725</td>
-            <td>0.493</td>
-            <td>0.396</td>
-            <td>0.356</td>
-            <td>92.1%</td>
-            <td>8.24s</td>
-            <td>22.6%</td>
-          </tr>
-          <tr>
-            <td class="model-name"><span class="model-dot" style="--dot-color:#1d9bf0"></span>Grok</td>
-            <td>0.695</td>
-            <td>0.474</td>
-            <td>0.406</td>
-            <td>0.376</td>
-            <td>86.1%</td>
-            <td>8.10s</td>
-            <td>16.1%</td>
-          </tr>
-          <tr>
-            <td class="model-name"><span class="model-dot" style="--dot-color:#7c3aed"></span>Ultravox</td>
-            <td>0.814</td>
-            <td>0.592</td>
-            <td>0.554</td>
-            <td>0.485</td>
-            <td class="best">100.0%</td>
-            <td>9.34s</td>
-            <td>22.8%</td>
-          </tr>
-          <tr>
-            <td class="model-name"><span class="model-dot" style="--dot-color:#6b7280"></span>Cascaded</td>
-            <td>0.736</td>
-            <td>0.483</td>
-            <td>0.446</td>
-            <td>0.406</td>
-            <td>93.1%</td>
-            <td>8.84s</td>
-            <td>27.7%</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-</section>
-
-<!-- ===================== CHARTS ===================== -->
-<section id="analysis" class="section section-alt">
-  <div class="container">
-    <h2 class="section-title">Detailed Analysis</h2>
-
-    <div class="chart-tabs">
-      <button class="tab-btn active" data-tab="difficulty">By Difficulty</button>
-      <button class="tab-btn" data-tab="disfluency">Disfluency Robustness</button>
-      <button class="tab-btn" data-tab="domain">By Domain</button>
-      <button class="tab-btn" data-tab="latency">Latency Breakdown</button>
-    </div>
-
-    <!-- Difficulty Tab -->
-    <div class="tab-content active" id="tab-difficulty">
-      <p class="chart-desc">Pass@1 performance degrades with scenario complexity. GPT-Realtime maintains the lead across all tiers.</p>
-      <div class="bar-chart-container">
-        <div class="bar-chart" id="chart-difficulty"></div>
-      </div>
-    </div>
-
-    <!-- Disfluency Tab -->
-    <div class="tab-content" id="tab-disfluency">
-      <p class="chart-desc">Self-correction remains the hardest disfluency type&mdash;even the best model (Gemini 2.5) succeeds on only 52.9% of rollback scenarios.</p>
-      <div class="bar-chart-container">
-        <div class="bar-chart" id="chart-disfluency"></div>
-      </div>
-    </div>
-
-    <!-- Domain Tab -->
-    <div class="tab-content" id="tab-domain">
-      <p class="chart-desc">Finance is easiest across all models; Housing consistently proves the most challenging domain.</p>
-      <div class="bar-chart-container">
-        <div class="bar-chart" id="chart-domain"></div>
-      </div>
-    </div>
-
-    <!-- Latency Tab -->
-    <div class="tab-content" id="tab-latency">
-      <p class="chart-desc">Latency decomposition reveals where each system bottlenecks: first word, tool call, or task completion.</p>
-      <div class="bar-chart-container">
-        <div class="bar-chart" id="chart-latency"></div>
       </div>
     </div>
   </div>
@@ -435,6 +405,7 @@
 <nav class="floating-nav" id="floating-nav">
   <a href="#abstract">Abstract</a>
   <a href="#highlights">Highlights</a>
+  <a href="#radar">Radar</a>
   <a href="#results">Results</a>
   <a href="#analysis">Analysis</a>
   <a href="#demos">Demos</a>

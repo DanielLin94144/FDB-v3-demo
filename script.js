@@ -1,12 +1,12 @@
 // ===================== DATA =====================
 const MODELS = [
-  { name: 'GPT-Realtime', color: '#10a37f' },
-  { name: 'Gemini 2.5',   color: '#4285f4' },
-  { name: 'Gemini 3.1',   color: '#1a73e8' },
-  { name: 'Nova Sonic 2',  color: '#ff6600' },
-  { name: 'Grok',          color: '#1d9bf0' },
-  { name: 'Ultravox',      color: '#7c3aed' },
-  { name: 'Cascaded',      color: '#6b7280' },
+  { name: 'GPT-Realtime', color: '#e8646a' },
+  { name: 'Gemini 2.5',   color: '#6ba3d6' },
+  { name: 'Gemini 3.1',   color: '#4a6fa5' },
+  { name: 'Nova Sonic 2',  color: '#f0a856' },
+  { name: 'Grok',          color: '#6cc6a4' },
+  { name: 'Ultravox',      color: '#9b8ec4' },
+  { name: 'Cascaded',      color: '#8eccc8' },
 ];
 
 const DATA = {
@@ -113,14 +113,51 @@ const DEMOS = [
 ];
 
 const PROVIDERS = [
-  { key: 'openai',     label: 'GPT-Realtime',  color: '#10a37f' },
-  { key: 'google',     label: 'Gemini 2.5',     color: '#4285f4' },
-  { key: 'gemini3_1',  label: 'Gemini 3.1',     color: '#1a73e8' },
-  { key: 'nova_sonic', label: 'Nova Sonic 2',   color: '#ff6600' },
-  { key: 'xai',        label: 'Grok',           color: '#1d9bf0' },
-  { key: 'ultravox',   label: 'Ultravox',       color: '#7c3aed' },
-  { key: 'cascaded',   label: 'Cascaded',       color: '#6b7280' },
+  { key: 'openai',     label: 'GPT-Realtime',  color: '#e8646a' },
+  { key: 'google',     label: 'Gemini 2.5',     color: '#6ba3d6' },
+  { key: 'gemini3_1',  label: 'Gemini 3.1',     color: '#4a6fa5' },
+  { key: 'nova_sonic', label: 'Nova Sonic 2',   color: '#f0a856' },
+  { key: 'xai',        label: 'Grok',           color: '#6cc6a4' },
+  { key: 'ultravox',   label: 'Ultravox',       color: '#9b8ec4' },
+  { key: 'cascaded',   label: 'Cascaded',       color: '#8eccc8' },
 ];
+
+// ===================== RADAR DATA =====================
+// Axes: Tool Sel, Arg Acc, Pass@1, Turn-Take, Latency (inverted: 1 - val/10), Interrupt (inverted: 1 - val)
+const RADAR_AXES = ['Tool Sel', 'Arg Acc', 'Pass@1', 'Turn-Take', 'Latency', 'Interrupt'];
+
+const RADAR_RAW = [
+  // [ToolSel, ArgAcc, Pass@1, TurnTake%, Latency_s, Interrupt%]
+  { name: 'GPT-Realtime',  vals: [0.818, 0.597, 0.525, 0.960, 6.72, 0.206] },
+  { name: 'Gemini 2.5 Live', vals: [0.801, 0.553, 0.446, 0.941, 5.68, 0.200] },
+  { name: 'Gemini 3.1 Live', vals: [0.810, 0.594, 0.485, 0.990, 7.56, 0.150] },
+  { name: 'Nova Sonic 2',  vals: [0.725, 0.493, 0.356, 0.921, 8.24, 0.226] },
+  { name: 'Grok',          vals: [0.695, 0.474, 0.376, 0.861, 8.10, 0.161] },
+  { name: 'Ultravox',      vals: [0.814, 0.592, 0.485, 1.000, 9.34, 0.228] },
+  { name: 'Cascaded',      vals: [0.736, 0.483, 0.406, 0.931, 8.84, 0.277] },
+];
+
+const RADAR_DISPLAY = [
+  // Display values for the value labels below each radar
+  (v) => v.toFixed(3),  // Tool Sel
+  (v) => v.toFixed(3),  // Arg Acc
+  (v) => v.toFixed(3),  // Pass@1
+  (v) => (v * 100).toFixed(1) + '%', // Turn-Take
+  (v) => v.toFixed(2) + 's',        // Latency
+  (v) => (v * 100).toFixed(1) + '%', // Interrupt
+];
+
+// Normalize to 0-1 for radar plotting
+function normalizeRadar(vals) {
+  return [
+    vals[0],              // Tool Sel: already 0-1
+    vals[1],              // Arg Acc: already 0-1
+    vals[2],              // Pass@1: already 0-1
+    vals[3],              // Turn-Take: already 0-1
+    1 - (vals[4] / 12),   // Latency: invert, lower is better (max ~10s)
+    1 - vals[5],          // Interrupt: invert, lower is better
+  ];
+}
 
 // ===================== CHART RENDERING =====================
 function renderGroupedBarChart(containerId, data, maxValue, isLatency = false) {
@@ -167,6 +204,157 @@ function renderGroupedBarChart(containerId, data, maxValue, isLatency = false) {
       row.appendChild(barsWrap);
       container.appendChild(row);
     });
+  });
+}
+
+// ===================== RADAR CHART RENDERING =====================
+function drawRadarChart(canvas, modelIdx, modelColor) {
+  const dpr = window.devicePixelRatio || 1;
+  const size = 280;
+  canvas.width = size * dpr;
+  canvas.height = size * dpr;
+  canvas.style.width = size + 'px';
+  canvas.style.height = size + 'px';
+
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+
+  const cx = size / 2;
+  const cy = size / 2;
+  const R = 100;
+  const n = RADAR_AXES.length;
+  const angleStep = (2 * Math.PI) / n;
+  const startAngle = -Math.PI / 2;
+
+  function getPoint(i, r) {
+    const angle = startAngle + i * angleStep;
+    return { x: cx + r * Math.cos(angle), y: cy + r * Math.sin(angle) };
+  }
+
+  // Draw grid rings
+  for (let ring = 1; ring <= 5; ring++) {
+    const r = (ring / 5) * R;
+    ctx.beginPath();
+    for (let i = 0; i <= n; i++) {
+      const p = getPoint(i % n, r);
+      if (i === 0) ctx.moveTo(p.x, p.y);
+      else ctx.lineTo(p.x, p.y);
+    }
+    ctx.closePath();
+    ctx.strokeStyle = '#e2e8f0';
+    ctx.lineWidth = 0.8;
+    ctx.stroke();
+  }
+
+  // Draw spokes
+  for (let i = 0; i < n; i++) {
+    const p = getPoint(i, R);
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(p.x, p.y);
+    ctx.strokeStyle = '#e2e8f0';
+    ctx.lineWidth = 0.8;
+    ctx.stroke();
+  }
+
+  // Draw axis labels
+  ctx.font = '500 10px Inter, sans-serif';
+  ctx.fillStyle = '#64748b';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  for (let i = 0; i < n; i++) {
+    const p = getPoint(i, R + 20);
+    ctx.fillText(RADAR_AXES[i], p.x, p.y);
+  }
+
+  // Compute mean of all models (normalized)
+  const meanNorm = new Array(n).fill(0);
+  RADAR_RAW.forEach(m => {
+    const nv = normalizeRadar(m.vals);
+    nv.forEach((v, i) => meanNorm[i] += v);
+  });
+  meanNorm.forEach((_, i) => meanNorm[i] /= RADAR_RAW.length);
+
+  // Draw mean polygon (dashed)
+  ctx.beginPath();
+  for (let i = 0; i <= n; i++) {
+    const r = meanNorm[i % n] * R;
+    const p = getPoint(i % n, r);
+    if (i === 0) ctx.moveTo(p.x, p.y);
+    else ctx.lineTo(p.x, p.y);
+  }
+  ctx.closePath();
+  ctx.setLineDash([4, 4]);
+  ctx.strokeStyle = '#94a3b8';
+  ctx.lineWidth = 1.2;
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Draw model polygon
+  const normVals = normalizeRadar(RADAR_RAW[modelIdx].vals);
+  ctx.beginPath();
+  for (let i = 0; i <= n; i++) {
+    const r = normVals[i % n] * R;
+    const p = getPoint(i % n, r);
+    if (i === 0) ctx.moveTo(p.x, p.y);
+    else ctx.lineTo(p.x, p.y);
+  }
+  ctx.closePath();
+
+  // Fill
+  const hex = modelColor;
+  const r2 = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+  ctx.fillStyle = `rgba(${r2},${g},${b},0.25)`;
+  ctx.fill();
+
+  // Stroke
+  ctx.strokeStyle = modelColor;
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Draw dots on vertices
+  for (let i = 0; i < n; i++) {
+    const rv = normVals[i] * R;
+    const p = getPoint(i, rv);
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 3, 0, 2 * Math.PI);
+    ctx.fillStyle = modelColor;
+    ctx.fill();
+  }
+}
+
+function initRadarCharts() {
+  const grid = document.getElementById('radar-grid');
+  if (!grid) return;
+  grid.innerHTML = '';
+
+  const colors = MODELS.map(m => m.color);
+
+  RADAR_RAW.forEach((model, idx) => {
+    const card = document.createElement('div');
+    card.className = 'radar-card';
+
+    const title = document.createElement('h4');
+    title.textContent = model.name;
+    title.style.color = colors[idx];
+    card.appendChild(title);
+
+    const canvas = document.createElement('canvas');
+    card.appendChild(canvas);
+
+    // Value labels
+    const valsDiv = document.createElement('div');
+    valsDiv.className = 'radar-values';
+    RADAR_AXES.forEach((axis, i) => {
+      const span = document.createElement('span');
+      span.className = 'radar-val';
+      span.innerHTML = `<strong>${axis}</strong> ${RADAR_DISPLAY[i](model.vals[i])}`;
+      valsDiv.appendChild(span);
+    });
+    card.appendChild(valsDiv);
+
+    grid.appendChild(card);
+    drawRadarChart(canvas, idx, colors[idx]);
   });
 }
 
@@ -328,6 +516,7 @@ function initScrollAnimations() {
 
 // ===================== INIT =====================
 document.addEventListener('DOMContentLoaded', () => {
+  initRadarCharts();
   initCharts();
   initTabs();
   renderDemos();
