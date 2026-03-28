@@ -16,20 +16,20 @@ s { text-decoration: line-through; opacity: 0.5; }
 /* ===================== LAYOUT ===================== */
 .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
 .container.narrow { max-width: 860px; }
-.section { padding: 64px 0; }
+.section { padding: 48px 0; }
 .section-alt { background: #f8fafc; }
 .section-title {
-  font-size: 2rem;
+  font-size: 1.8rem;
   font-weight: 800;
   text-align: center;
-  margin-bottom: 16px;
+  margin-bottom: 10px;
   letter-spacing: -0.02em;
 }
 .section-desc {
   text-align: center;
   color: #64748b;
   max-width: 700px;
-  margin: 0 auto 36px;
+  margin: 0 auto 28px;
   font-size: 1.05rem;
 }
 
@@ -140,7 +140,7 @@ s { text-decoration: line-through; opacity: 0.5; }
   background: #fff;
   border: 1px solid #e2e8f0;
   border-radius: 16px;
-  padding: 32px 28px;
+  padding: 24px 24px;
   transition: all 0.25s;
 }
 .highlight-card:hover {
@@ -149,8 +149,8 @@ s { text-decoration: line-through; opacity: 0.5; }
   border-color: #cbd5e1;
 }
 .highlight-icon {
-  font-size: 2.2rem;
-  margin-bottom: 16px;
+  font-size: 2rem;
+  margin-bottom: 10px;
 }
 .highlight-card h3 {
   font-size: 1.15rem;
@@ -223,7 +223,7 @@ s { text-decoration: line-through; opacity: 0.5; }
   background: #fff;
   border: 1px solid #e2e8f0;
   border-radius: 14px;
-  padding: 28px;
+  padding: 22px;
   transition: all 0.25s;
 }
 .domain-card:hover {
@@ -623,7 +623,7 @@ td.best::after {
   background: #fff;
   border: 1px solid #e2e8f0;
   border-radius: 14px;
-  padding: 28px;
+  padding: 22px;
 }
 .disfluency-tag {
   display: inline-block;
@@ -715,7 +715,7 @@ td.best::after {
 
 /* ===================== FOOTER ===================== */
 .footer {
-  padding: 40px 0;
+  padding: 28px 0;
   text-align: center;
   color: #94a3b8;
   font-size: 0.85rem;
@@ -761,8 +761,8 @@ td.best::after {
 
 /* ===================== RESPONSIVE ===================== */
 @media (max-width: 768px) {
-  .hero { padding: 80px 0 60px; }
-  .section { padding: 48px 0; }
+  .hero { padding: 72px 0 52px; }
+  .section { padding: 36px 0; }
   .section-title { font-size: 1.6rem; }
   .highlights-grid { grid-template-columns: 1fr; }
   .domains-grid { grid-template-columns: 1fr; }

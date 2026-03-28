@@ -51,7 +51,7 @@
       <div class="highlight-card">
         <div class="highlight-icon">&#127908;</div>
         <h3>Real Human Speech</h3>
-        <p>100 recordings from 12 diverse speakers in uncontrolled environments with natural disfluencies&mdash;no TTS synthesis.</p>
+        <p>All recordings are from real human speakers&mdash;no TTS synthesis. Each sample preserves the authentic ambient background audio for realistic evaluation.</p>
       </div>
       <div class="highlight-card">
         <div class="highlight-icon">&#128260;</div>
@@ -226,6 +226,41 @@
   </div>
 </section>
 
+<!-- ===================== DISFLUENCY EXAMPLES ===================== -->
+<section id="disfluency" class="section section-alt">
+  <div class="container">
+    <h2 class="section-title">Disfluency Categories</h2>
+    <p class="section-desc">Every recording is annotated for five disfluency categories, enabling fine-grained robustness analysis.</p>
+    <div class="disfluency-grid">
+      <div class="disfluency-card">
+        <div class="disfluency-tag">Filler</div>
+        <p class="disfluency-example">"I'd like to <mark>um</mark> search for flights to <mark>uh</mark> Boston"</p>
+        <p class="disfluency-desc">Redundant acoustic tokens (um, uh) that may degrade reasoning accuracy or inflate latency.</p>
+      </div>
+      <div class="disfluency-card">
+        <div class="disfluency-tag">Pause</div>
+        <p class="disfluency-example">"Book a flight to... <mark>[3s silence]</mark> ...New York on March 5th"</p>
+        <p class="disfluency-desc">Mid-utterance silences during information retrieval that challenge end-of-turn detection.</p>
+      </div>
+      <div class="disfluency-card">
+        <div class="disfluency-tag">Hesitation</div>
+        <p class="disfluency-example">"Can you check my my <mark>my order</mark> status for <mark>for</mark> order 5523"</p>
+        <p class="disfluency-desc">Combinations of fillers and word repetitions that test the system's parsing ability.</p>
+      </div>
+      <div class="disfluency-card">
+        <div class="disfluency-tag">False Start</div>
+        <p class="disfluency-example">"<mark><s>Search for hotels in</s></mark>&mdash; actually, find me flights to LA"</p>
+        <p class="disfluency-desc">Abandoning an initial request for a new intent; model must discard obsolete context.</p>
+      </div>
+      <div class="disfluency-card">
+        <div class="disfluency-tag">Self-Correction</div>
+        <p class="disfluency-example">"Book me a flight to <mark><s>New York</s></mark>&mdash; wait, make that <mark>Boston</mark>"</p>
+        <p class="disfluency-desc">Updating parameters mid-sentence; requires dynamic state rollback&mdash;the hardest category.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ===================== TASK DOMAINS ===================== -->
 <section id="domains" class="section">
   <div class="container">
@@ -294,41 +329,6 @@
 
     <div class="demos-list" id="demos-list">
       <!-- Populated by JS -->
-    </div>
-  </div>
-</section>
-
-<!-- ===================== DISFLUENCY EXAMPLES ===================== -->
-<section id="disfluency" class="section section-alt">
-  <div class="container">
-    <h2 class="section-title">Disfluency Categories</h2>
-    <p class="section-desc">Every recording is annotated for five disfluency categories, enabling fine-grained robustness analysis.</p>
-    <div class="disfluency-grid">
-      <div class="disfluency-card">
-        <div class="disfluency-tag">Filler</div>
-        <p class="disfluency-example">"I'd like to <mark>um</mark> search for flights to <mark>uh</mark> Boston"</p>
-        <p class="disfluency-desc">Redundant acoustic tokens (um, uh) that may degrade reasoning accuracy or inflate latency.</p>
-      </div>
-      <div class="disfluency-card">
-        <div class="disfluency-tag">Pause</div>
-        <p class="disfluency-example">"Book a flight to... <mark>[3s silence]</mark> ...New York on March 5th"</p>
-        <p class="disfluency-desc">Mid-utterance silences during information retrieval that challenge end-of-turn detection.</p>
-      </div>
-      <div class="disfluency-card">
-        <div class="disfluency-tag">Hesitation</div>
-        <p class="disfluency-example">"Can you check my my <mark>my order</mark> status for <mark>for</mark> order 5523"</p>
-        <p class="disfluency-desc">Combinations of fillers and word repetitions that test the system's parsing ability.</p>
-      </div>
-      <div class="disfluency-card">
-        <div class="disfluency-tag">False Start</div>
-        <p class="disfluency-example">"<mark><s>Search for hotels in</s></mark>&mdash; actually, find me flights to LA"</p>
-        <p class="disfluency-desc">Abandoning an initial request for a new intent; model must discard obsolete context.</p>
-      </div>
-      <div class="disfluency-card">
-        <div class="disfluency-tag">Self-Correction</div>
-        <p class="disfluency-example">"Book me a flight to <mark><s>New York</s></mark>&mdash; wait, make that <mark>Boston</mark>"</p>
-        <p class="disfluency-desc">Updating parameters mid-sentence; requires dynamic state rollback&mdash;the hardest category.</p>
-      </div>
     </div>
   </div>
 </section>
