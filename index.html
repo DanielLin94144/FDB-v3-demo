@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Full-Duplex-Bench-v3</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ===================== HERO ===================== -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="container">
+    <p class="venue-badge">ACL 2026</p>
+    <h1 class="hero-title">Full-Duplex-Bench-v3</h1>
+    <p class="hero-subtitle">Benchmarking Spoken Language Models on<br/>In-the-Wild Speech &amp; Multi-Step Tool Calling</p>
+    <p class="authors">
+      <a href="#">Guan-Ting Lin</a><sup>1</sup>,
+      <a href="#">Chen Chen</a><sup>2</sup>,
+      <a href="#">Zhehuai Chen</a><sup>2</sup>,
+      <a href="#">Hung-yi Lee</a><sup>1</sup>
+    </p>
+    <p class="affiliations"><sup>1</sup>National Taiwan University &nbsp;&middot;&nbsp; <sup>2</sup>Nvidia</p>
+    <div class="hero-links">
+      <a href="#" class="btn btn-primary"><span class="btn-icon">&#128196;</span> Paper</a>
+      <a href="#" class="btn btn-secondary"><span class="btn-icon">&#128187;</span> Code</a>
+      <a href="#" class="btn btn-secondary"><span class="btn-icon">&#128202;</span> Data</a>
+      <a href="#" class="btn btn-secondary"><span class="btn-icon">&#127942;</span> Leaderboard</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== ABSTRACT ===================== -->
+<section id="abstract" class="section">
+  <div class="container narrow">
+    <h2 class="section-title">Abstract</h2>
+    <p class="abstract-text">
+      We introduce <strong>Full-Duplex-Bench-v3</strong>, a benchmark for evaluating spoken language models under naturalistic speech conditions and multi-step tool use. Unlike prior work, our dataset consists entirely of <em>real human audio</em> annotated for five disfluency categories, paired with scenarios requiring chained API calls across four task domains. We evaluate seven model configurations&mdash;GPT-Realtime, Gemini 2.5 Live, Gemini 3.1 Live, Grok, Nova Sonic 2, Ultravox v0.7, and a Cascaded baseline&mdash;across accuracy, latency, and turn-taking dimensions. No single system dominates: GPT-Realtime leads on Pass@1 (0.525); Gemini 2.5 Live on task-completion latency (5.68s); and Gemini 3.1 Live on turn-taking discipline (15.0% interruption rate, 99.0% turn-take rate). Across all systems, self-correction handling and multi-step reasoning under hard conditions remain the most consistent failure modes.
+    </p>
+  </div>
+</section>
+
+<!-- ===================== KEY HIGHLIGHTS ===================== -->
+<section id="highlights" class="section section-alt">
+  <div class="container">
+    <h2 class="section-title">Key Highlights</h2>
+    <div class="highlights-grid">
+      <div class="highlight-card">
+        <div class="highlight-icon">&#127908;</div>
+        <h3>Real Human Speech</h3>
+        <p>100 recordings from 12 diverse speakers in uncontrolled environments with natural disfluencies&mdash;no TTS synthesis.</p>
+      </div>
+      <div class="highlight-card">
+        <div class="highlight-icon">&#128260;</div>
+        <h3>Self-Correction &amp; Rollback</h3>
+        <p>21 scenarios test mid-utterance intent changes requiring dynamic state rollback&mdash;the hardest failure mode across all models.</p>
+      </div>
+      <div class="highlight-card">
+        <div class="highlight-icon">&#128279;</div>
+        <h3>Multi-Step Tool Chaining</h3>
+        <p>Sequences of API calls across 4 domains (Travel, Finance, Housing, E-Commerce) with deterministic outputs for automatic scoring.</p>
+      </div>
+      <div class="highlight-card">
+        <div class="highlight-icon">&#9201;</div>
+        <h3>Latency Decomposition</h3>
+        <p>Fine-grained breakdown into first-response, tool-call, and task-completion latency reveals where each system bottlenecks.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== OVERVIEW FIGURE ===================== -->
+<section id="overview" class="section">
+  <div class="container">
+    <h2 class="section-title">Benchmark Overview</h2>
+    <div class="overview-flow">
+      <div class="flow-step">
+        <div class="flow-number">1</div>
+        <h4>Real Speech Input</h4>
+        <p>Human speakers record natural queries with disfluencies (fillers, pauses, hesitations, false starts, self-corrections)</p>
+      </div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-step">
+        <div class="flow-number">2</div>
+        <h4>Voice Agent Processing</h4>
+        <p>Models receive streaming audio and must reason, call tools, and generate spoken responses in real-time</p>
+      </div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-step">
+        <div class="flow-number">3</div>
+        <h4>Multi-Step Tool Calls</h4>
+        <p>Agents chain API calls across 11 mock functions spanning 4 task domains with deterministic outputs</p>
+      </div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-step">
+        <div class="flow-number">4</div>
+        <h4>Multi-Metric Evaluation</h4>
+        <p>Automatic scoring on tool selection, argument accuracy, Pass@1, latency, and turn-taking dynamics</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TASK DOMAINS ===================== -->
+<section id="domains" class="section section-alt">
+  <div class="container">
+    <h2 class="section-title">Task Domains &amp; Mock APIs</h2>
+    <div class="domains-grid">
+      <div class="domain-card" data-domain="travel">
+        <div class="domain-header">
+          <span class="domain-icon">&#9992;</span>
+          <h3>Travel &amp; Identity</h3>
+        </div>
+        <ul class="api-list">
+          <li><code>search_flights(destination, date)</code></li>
+          <li><code>book_ticket(passenger_name, flight_id)</code></li>
+          <li><code>update_travel_profile(document_type, document_number)</code></li>
+        </ul>
+      </div>
+      <div class="domain-card" data-domain="finance">
+        <div class="domain-header">
+          <span class="domain-icon">&#128176;</span>
+          <h3>Finance &amp; Billing</h3>
+        </div>
+        <ul class="api-list">
+          <li><code>query_card_benefits(card_last_4, category)</code></li>
+          <li><code>calculate_currency_exchange(amount, from_currency, to_currency)</code></li>
+          <li><code>modify_autopay_source(new_account_id)</code></li>
+        </ul>
+      </div>
+      <div class="domain-card" data-domain="housing">
+        <div class="domain-header">
+          <span class="domain-icon">&#127968;</span>
+          <h3>Housing &amp; Location</h3>
+        </div>
+        <ul class="api-list">
+          <li><code>search_apartments(max_budget, amenities)</code></li>
+          <li><code>update_search_filter(condition, new_value)</code></li>
+        </ul>
+      </div>
+      <div class="domain-card" data-domain="ecommerce">
+        <div class="domain-header">
+          <span class="domain-icon">&#128722;</span>
+          <h3>E-Commerce Support</h3>
+        </div>
+        <ul class="api-list">
+          <li><code>check_order_status(order_id)</code></li>
+          <li><code>cancel_pending_action(action_type)</code></li>
+          <li><code>process_exchange(order_id, new_shipping_address)</code></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== RESULTS ===================== -->
+<section id="results" class="section">
+  <div class="container">
+    <h2 class="section-title">Main Results</h2>
+    <p class="section-desc">Overall performance and turn-taking metrics across all 7 systems. No single model dominates all dimensions.</p>
+
+    <div class="table-wrapper">
+      <table class="results-table">
+        <thead>
+          <tr>
+            <th></th>
+            <th colspan="4" class="group-header">Tool Use</th>
+            <th colspan="3" class="group-header">Turn-Taking Dynamics</th>
+          </tr>
+          <tr>
+            <th>Model</th>
+            <th>Tool Sel &uarr;</th>
+            <th>Arg Acc &uarr;</th>
+            <th>Resp Acc &uarr;</th>
+            <th>Pass@1 &uarr;</th>
+            <th>Take-turn &uarr;</th>
+            <th>Latency &darr;</th>
+            <th>Interrupt &darr;</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="model-name"><span class="model-dot" style="--dot-color:#10a37f"></span>GPT-Realtime</td>
+            <td class="best">0.818</td>
+            <td class="best">0.597</td>
+            <td class="best">0.574</td>
+            <td class="best">0.525</td>
+            <td>96.0%</td>
+            <td>6.72s</td>
+            <td>20.6%</td>
+          </tr>
+          <tr>
+            <td class="model-name"><span class="model-dot" style="--dot-color:#4285f4"></span>Gemini 2.5 Live</td>
+            <td>0.801</td>
+            <td>0.553</td>
+            <td>0.564</td>
+            <td>0.446</td>
+            <td>94.1%</td>
+            <td class="best">5.68s</td>
+            <td>20.0%</td>
+          </tr>
+          <tr>
+            <td class="model-name"><span class="model-dot" style="--dot-color:#1a73e8"></span>Gemini 3.1 Live</td>
+            <td>0.810</td>
+            <td>0.594</td>
+            <td>0.560</td>
+            <td>0.485</td>
+            <td>99.0%</td>
+            <td>7.56s</td>
+            <td class="best">15.0%</td>
+          </tr>
+          <tr>
+            <td class="model-name"><span class="model-dot" style="--dot-color:#ff6600"></span>Nova Sonic 2</td>
+            <td>0.725</td>
+            <td>0.493</td>
+            <td>0.396</td>
+            <td>0.356</td>
+            <td>92.1%</td>
+            <td>8.24s</td>
+            <td>22.6%</td>
+          </tr>
+          <tr>
+            <td class="model-name"><span class="model-dot" style="--dot-color:#1d9bf0"></span>Grok</td>
+            <td>0.695</td>
+            <td>0.474</td>
+            <td>0.406</td>
+            <td>0.376</td>
+            <td>86.1%</td>
+            <td>8.10s</td>
+            <td>16.1%</td>
+          </tr>
+          <tr>
+            <td class="model-name"><span class="model-dot" style="--dot-color:#7c3aed"></span>Ultravox</td>
+            <td>0.814</td>
+            <td>0.592</td>
+            <td>0.554</td>
+            <td>0.485</td>
+            <td class="best">100.0%</td>
+            <td>9.34s</td>
+            <td>22.8%</td>
+          </tr>
+          <tr>
+            <td class="model-name"><span class="model-dot" style="--dot-color:#6b7280"></span>Cascaded</td>
+            <td>0.736</td>
+            <td>0.483</td>
+            <td>0.446</td>
+            <td>0.406</td>
+            <td>93.1%</td>
+            <td>8.84s</td>
+            <td>27.7%</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CHARTS ===================== -->
+<section id="analysis" class="section section-alt">
+  <div class="container">
+    <h2 class="section-title">Detailed Analysis</h2>
+
+    <div class="chart-tabs">
+      <button class="tab-btn active" data-tab="difficulty">By Difficulty</button>
+      <button class="tab-btn" data-tab="disfluency">Disfluency Robustness</button>
+      <button class="tab-btn" data-tab="domain">By Domain</button>
+      <button class="tab-btn" data-tab="latency">Latency Breakdown</button>
+    </div>
+
+    <!-- Difficulty Tab -->
+    <div class="tab-content active" id="tab-difficulty">
+      <p class="chart-desc">Pass@1 performance degrades with scenario complexity. GPT-Realtime maintains the lead across all tiers.</p>
+      <div class="bar-chart-container">
+        <div class="bar-chart" id="chart-difficulty"></div>
+      </div>
+    </div>
+
+    <!-- Disfluency Tab -->
+    <div class="tab-content" id="tab-disfluency">
+      <p class="chart-desc">Self-correction remains the hardest disfluency type&mdash;even the best model (Gemini 2.5) succeeds on only 52.9% of rollback scenarios.</p>
+      <div class="bar-chart-container">
+        <div class="bar-chart" id="chart-disfluency"></div>
+      </div>
+    </div>
+
+    <!-- Domain Tab -->
+    <div class="tab-content" id="tab-domain">
+      <p class="chart-desc">Finance is easiest across all models; Housing consistently proves the most challenging domain.</p>
+      <div class="bar-chart-container">
+        <div class="bar-chart" id="chart-domain"></div>
+      </div>
+    </div>
+
+    <!-- Latency Tab -->
+    <div class="tab-content" id="tab-latency">
+      <p class="chart-desc">Latency decomposition reveals where each system bottlenecks: first word, tool call, or task completion.</p>
+      <div class="bar-chart-container">
+        <div class="bar-chart" id="chart-latency"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== AUDIO DEMOS ===================== -->
+<section id="demos" class="section">
+  <div class="container">
+    <h2 class="section-title">Audio Demos</h2>
+    <p class="section-desc">Listen to real user queries and compare how different voice agents respond. All inputs feature natural disfluencies recorded in uncontrolled environments.</p>
+
+    <div class="demo-filters">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="ecommerce">E-Commerce</button>
+      <button class="filter-btn" data-filter="finance">Finance</button>
+      <button class="filter-btn" data-filter="housing">Housing</button>
+      <button class="filter-btn" data-filter="travel">Travel</button>
+    </div>
+
+    <div class="demos-list" id="demos-list">
+      <!-- Populated by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- ===================== DISFLUENCY EXAMPLES ===================== -->
+<section id="disfluency" class="section section-alt">
+  <div class="container">
+    <h2 class="section-title">Disfluency Categories</h2>
+    <p class="section-desc">Every recording is annotated for five disfluency categories, enabling fine-grained robustness analysis.</p>
+    <div class="disfluency-grid">
+      <div class="disfluency-card">
+        <div class="disfluency-tag">Filler</div>
+        <p class="disfluency-example">"I'd like to <mark>um</mark> search for flights to <mark>uh</mark> Boston"</p>
+        <p class="disfluency-desc">Redundant acoustic tokens (um, uh) that may degrade reasoning accuracy or inflate latency.</p>
+      </div>
+      <div class="disfluency-card">
+        <div class="disfluency-tag">Pause</div>
+        <p class="disfluency-example">"Book a flight to... <mark>[3s silence]</mark> ...New York on March 5th"</p>
+        <p class="disfluency-desc">Mid-utterance silences during information retrieval that challenge end-of-turn detection.</p>
+      </div>
+      <div class="disfluency-card">
+        <div class="disfluency-tag">Hesitation</div>
+        <p class="disfluency-example">"Can you check my my <mark>my order</mark> status for <mark>for</mark> order 5523"</p>
+        <p class="disfluency-desc">Combinations of fillers and word repetitions that test the system's parsing ability.</p>
+      </div>
+      <div class="disfluency-card">
+        <div class="disfluency-tag">False Start</div>
+        <p class="disfluency-example">"<mark><s>Search for hotels in</s></mark>&mdash; actually, find me flights to LA"</p>
+        <p class="disfluency-desc">Abandoning an initial request for a new intent; model must discard obsolete context.</p>
+      </div>
+      <div class="disfluency-card">
+        <div class="disfluency-tag">Self-Correction</div>
+        <p class="disfluency-example">"Book me a flight to <mark><s>New York</s></mark>&mdash; wait, make that <mark>Boston</mark>"</p>
+        <p class="disfluency-desc">Updating parameters mid-sentence; requires dynamic state rollback&mdash;the hardest category.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== KEY FINDINGS ===================== -->
+<section id="findings" class="section">
+  <div class="container narrow">
+    <h2 class="section-title">Key Findings</h2>
+    <div class="findings-list">
+      <div class="finding">
+        <div class="finding-number">01</div>
+        <div class="finding-content">
+          <h4>No Single Winner</h4>
+          <p>GPT-Realtime leads on accuracy (Pass@1: 0.525), Gemini 2.5 Live on latency (5.68s), and Gemini 3.1 Live on turn-taking discipline (15.0% interruption, 99.0% turn-take rate).</p>
+        </div>
+      </div>
+      <div class="finding">
+        <div class="finding-number">02</div>
+        <div class="finding-content">
+          <h4>Self-Corrections Break Everyone</h4>
+          <p>Even the best model succeeds on only 52.9% of self-correction scenarios. Dynamic state rollback remains the most consistent cross-system failure mode.</p>
+        </div>
+      </div>
+      <div class="finding">
+        <div class="finding-number">03</div>
+        <div class="finding-content">
+          <h4>Accuracy&ndash;Latency Frontier</h4>
+          <p>Gemini 2.5 Live is Pareto-optimal for latency-sensitive deployments. GPT-Realtime occupies the high-accuracy, moderate-latency region.</p>
+        </div>
+      </div>
+      <div class="finding">
+        <div class="finding-number">04</div>
+        <div class="finding-content">
+          <h4>Ultravox: Promising Open Contender</h4>
+          <p>Matches proprietary models on tool selection (0.814) with a perfect turn-take rate (100%), but its 9.34s latency is the highest among all systems.</p>
+        </div>
+      </div>
+      <div class="finding">
+        <div class="finding-number">05</div>
+        <div class="finding-content">
+          <h4>Housing Is Universally Hard</h4>
+          <p>No model exceeds 0.308 Pass@1 on Housing tasks, while Finance reaches 0.840&mdash;a 2.7x gap highlighting domain-specific challenges.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CITATION ===================== -->
+<section id="citation" class="section section-alt">
+  <div class="container narrow">
+    <h2 class="section-title">Citation</h2>
+    <div class="citation-block">
+      <button class="copy-btn" id="copy-btn" title="Copy to clipboard">&#128203; Copy</button>
+      <pre><code id="bibtex">@inproceedings{lin2026fullduplexbenchv3,
+  title     = {Full-Duplex-Bench-v3: Benchmarking Spoken Language
+               Models on In-the-Wild Speech and Multi-Step
+               Tool Calling},
+  author    = {Lin, Guan-Ting and Chen, Chen and
+               Chen, Zhehuai and Lee, Hung-yi},
+  booktitle = {Proceedings of the 64th Annual Meeting of the
+               Association for Computational Linguistics (ACL)},
+  year      = {2026}
+}</code></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FOOTER ===================== -->
+<footer class="footer">
+  <div class="container">
+    <p>&copy; 2026 Full-Duplex-Bench-v3 &middot; National Taiwan University &amp; Nvidia</p>
+  </div>
+</footer>
+
+<!-- ===================== NAV ===================== -->
+<nav class="floating-nav" id="floating-nav">
+  <a href="#abstract">Abstract</a>
+  <a href="#highlights">Highlights</a>
+  <a href="#results">Results</a>
+  <a href="#analysis">Analysis</a>
+  <a href="#demos">Demos</a>
+  <a href="#findings">Findings</a>
+  <a href="#citation">Cite</a>
+</nav>
+
+<script src="script.js"></script>
+</body>
+</html>
