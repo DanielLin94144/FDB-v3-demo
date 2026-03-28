@@ -16,27 +16,27 @@ s { text-decoration: line-through; opacity: 0.5; }
 /* ===================== LAYOUT ===================== */
 .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
 .container.narrow { max-width: 860px; }
-.section { padding: 48px 0; }
+.section { padding: 36px 0; }
 .section-alt { background: #f8fafc; }
 .section-title {
-  font-size: 1.8rem;
+  font-size: 1.6rem;
   font-weight: 800;
   text-align: center;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   letter-spacing: -0.02em;
 }
 .section-desc {
   text-align: center;
   color: #64748b;
   max-width: 700px;
-  margin: 0 auto 28px;
+  margin: 0 auto 20px;
   font-size: 1.05rem;
 }
 
 /* ===================== HERO ===================== */
 .hero {
   position: relative;
-  padding: 110px 0 80px;
+  padding: 90px 0 64px;
   text-align: center;
   overflow: hidden;
   background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
@@ -64,22 +64,23 @@ s { text-decoration: line-through; opacity: 0.5; }
   background: rgba(255,255,255,0.05);
 }
 .hero-title {
-  font-size: clamp(2.5rem, 6vw, 4.2rem);
-  font-weight: 900;
-  letter-spacing: -0.03em;
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
   line-height: 1.1;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
   background: linear-gradient(135deg, #fff 0%, #93c5fd 50%, #c4b5fd 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 .hero-subtitle {
-  font-size: clamp(1.1rem, 2.5vw, 1.35rem);
-  color: rgba(255,255,255,0.7);
-  font-weight: 400;
-  margin-bottom: 28px;
-  line-height: 1.6;
+  font-size: clamp(1.3rem, 3.5vw, 2rem);
+  color: rgba(255,255,255,0.85);
+  font-weight: 600;
+  margin-bottom: 24px;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
 }
 .authors {
   font-size: 1.05rem;
@@ -94,7 +95,7 @@ s { text-decoration: line-through; opacity: 0.5; }
 .affiliations {
   font-size: 0.9rem;
   color: rgba(255,255,255,0.5);
-  margin-bottom: 30px;
+  margin-bottom: 24px;
 }
 .affiliations sup { font-size: 0.7em; }
 .hero-links { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
@@ -761,8 +762,8 @@ td.best::after {
 
 /* ===================== RESPONSIVE ===================== */
 @media (max-width: 768px) {
-  .hero { padding: 72px 0 52px; }
-  .section { padding: 36px 0; }
+  .hero { padding: 64px 0 44px; }
+  .section { padding: 28px 0; }
   .section-title { font-size: 1.6rem; }
   .highlights-grid { grid-template-columns: 1fr; }
   .domains-grid { grid-template-columns: 1fr; }
