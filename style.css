@@ -16,7 +16,7 @@ s { text-decoration: line-through; opacity: 0.5; }
 /* ===================== LAYOUT ===================== */
 .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
 .container.narrow { max-width: 860px; }
-.section { padding: 100px 0; }
+.section { padding: 64px 0; }
 .section-alt { background: #f8fafc; }
 .section-title {
   font-size: 2rem;
@@ -29,14 +29,14 @@ s { text-decoration: line-through; opacity: 0.5; }
   text-align: center;
   color: #64748b;
   max-width: 700px;
-  margin: 0 auto 48px;
+  margin: 0 auto 36px;
   font-size: 1.05rem;
 }
 
 /* ===================== HERO ===================== */
 .hero {
   position: relative;
-  padding: 140px 0 100px;
+  padding: 110px 0 80px;
   text-align: center;
   overflow: hidden;
   background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
@@ -94,7 +94,7 @@ s { text-decoration: line-through; opacity: 0.5; }
 .affiliations {
   font-size: 0.9rem;
   color: rgba(255,255,255,0.5);
-  margin-bottom: 40px;
+  margin-bottom: 30px;
 }
 .affiliations sup { font-size: 0.7em; }
 .hero-links { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
@@ -264,7 +264,7 @@ s { text-decoration: line-through; opacity: 0.5; }
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 28px;
+  gap: 20px;
 }
 #radar-canvas {
   max-width: 680px;
@@ -375,7 +375,7 @@ td.best::after {
   display: flex;
   justify-content: center;
   gap: 8px;
-  margin-bottom: 36px;
+  margin-bottom: 28px;
   flex-wrap: wrap;
 }
 .tab-btn {
@@ -401,7 +401,7 @@ td.best::after {
 .chart-desc {
   text-align: center;
   color: #64748b;
-  margin-bottom: 32px;
+  margin-bottom: 24px;
   font-size: 0.95rem;
 }
 
@@ -489,7 +489,7 @@ td.best::after {
   display: flex;
   justify-content: center;
   gap: 8px;
-  margin-bottom: 36px;
+  margin-bottom: 28px;
   flex-wrap: wrap;
 }
 .filter-btn {
@@ -761,8 +761,8 @@ td.best::after {
 
 /* ===================== RESPONSIVE ===================== */
 @media (max-width: 768px) {
-  .hero { padding: 100px 0 80px; }
-  .section { padding: 64px 0; }
+  .hero { padding: 80px 0 60px; }
+  .section { padding: 48px 0; }
   .section-title { font-size: 1.6rem; }
   .highlights-grid { grid-template-columns: 1fr; }
   .domains-grid { grid-template-columns: 1fr; }
