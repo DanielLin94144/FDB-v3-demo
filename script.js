@@ -1,11 +1,11 @@
 // ===================== DATA =====================
 const MODELS = [
   { name: 'GPT-Realtime', color: '#e8646a' },
-  { name: 'Gemini 2.5',   color: '#6ba3d6' },
-  { name: 'Gemini 3.1',   color: '#4a6fa5' },
-  { name: 'Grok',          color: '#6cc6a4' },
-  { name: 'Ultravox',      color: '#9b8ec4' },
-  { name: 'Cascaded',      color: '#d4915e' },
+  { name: 'Gemini 2.5', color: '#6ba3d6' },
+  { name: 'Gemini 3.1', color: '#4a6fa5' },
+  { name: 'Grok', color: '#6cc6a4' },
+  { name: 'Ultravox', color: '#9b8ec4' },
+  { name: 'Cascaded', color: '#d4915e' },
 ];
 
 const DATA = {
@@ -50,6 +50,7 @@ const DATA = {
       [3.95, 2.21, 4.25],  // Gemini 3.1
       [5.97, 0.63, 6.65],  // Grok
       [3.88, 6.01, 8.40],  // Ultravox
+      [8.78, 3.15, 10.12], // Cascaded
     ]
   }
 };
@@ -107,22 +108,24 @@ const DEMOS = [
 ];
 
 const PROVIDERS = [
-  { key: 'openai',     label: 'GPT-Realtime',  color: '#e8646a' },
-  { key: 'google',     label: 'Gemini 2.5',     color: '#6ba3d6' },
-  { key: 'gemini3_1',  label: 'Gemini 3.1',     color: '#4a6fa5' },
-  { key: 'xai',        label: 'Grok',           color: '#6cc6a4' },
-  { key: 'ultravox',   label: 'Ultravox',       color: '#9b8ec4' },
+  { key: 'openai', label: 'GPT-Realtime', color: '#e8646a' },
+  { key: 'google', label: 'Gemini 2.5', color: '#6ba3d6' },
+  { key: 'gemini3_1', label: 'Gemini 3.1', color: '#4a6fa5' },
+  { key: 'xai', label: 'Grok', color: '#6cc6a4' },
+  { key: 'ultravox', label: 'Ultravox', color: '#9b8ec4' },
+  { key: 'cascaded', label: 'Cascaded', color: '#d4915e' },
 ];
 
 // ===================== RADAR DATA =====================
 const RADAR_AXES = ['Tool Sel', 'Arg Acc', 'Resp Qual', 'Pass@1', 'Turn-Take', 'Latency', 'Interrupt'];
 
 const RADAR_RAW = [
-  { name: 'GPT-Realtime',    vals: [0.876, 0.680, 0.792, 0.600, 0.960, 6.89, 0.135] },
+  { name: 'GPT-Realtime', vals: [0.876, 0.680, 0.792, 0.600, 0.960, 6.89, 0.135] },
   { name: 'Gemini 2.5 Live', vals: [0.786, 0.593, 0.554, 0.490, 0.920, 7.26, 0.141] },
   { name: 'Gemini 3.1 Live', vals: [0.817, 0.588, 0.718, 0.540, 0.780, 4.25, 0.192] },
-  { name: 'Grok',            vals: [0.797, 0.542, 0.617, 0.430, 0.940, 6.65, 0.255] },
-  { name: 'Ultravox',        vals: [0.794, 0.513, 0.510, 0.410, 0.960, 8.40, 0.479] },
+  { name: 'Grok', vals: [0.797, 0.542, 0.617, 0.430, 0.940, 6.65, 0.255] },
+  { name: 'Ultravox', vals: [0.794, 0.513, 0.510, 0.410, 0.960, 8.40, 0.479] },
+  { name: 'Cascaded', vals: [0.803, 0.562, 0.655, 0.450, 1.000, 10.12, 0.330] },
 ];
 
 function normalizeRadar(vals) {
@@ -138,7 +141,7 @@ function normalizeRadar(vals) {
 }
 
 // Track which models are visible
-let radarVisible = [true, true, true, true, true];
+let radarVisible = [true, true, true, true, true, true];
 
 // ===================== CHART RENDERING =====================
 function renderGroupedBarChart(containerId, data, maxValue, isLatency = false) {
@@ -190,9 +193,9 @@ function renderGroupedBarChart(containerId, data, maxValue, isLatency = false) {
 
 // ===================== RADAR CHART RENDERING =====================
 function hexToRgb(hex) {
-  const r = parseInt(hex.slice(1,3),16);
-  const g = parseInt(hex.slice(3,5),16);
-  const b = parseInt(hex.slice(5,7),16);
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
   return { r, g, b };
 }
 

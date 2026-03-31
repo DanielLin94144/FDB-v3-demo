@@ -38,7 +38,7 @@
   <div class="container narrow">
     <h2 class="section-title">Abstract</h2>
     <p class="abstract-text">
-      We introduce <strong>Full-Duplex-Bench-v3</strong>, a benchmark for evaluating spoken language models under naturalistic speech conditions and multi-step tool use. Unlike prior work, our dataset consists entirely of <em>real human audio</em> annotated for five disfluency categories, paired with scenarios requiring chained API calls across four task domains. We evaluate five model configurations&mdash;GPT-Realtime, Gemini Live 2.5, Gemini Live 3.1, Grok, and Ultravox v0.7&mdash;across accuracy, latency, and turn-taking dimensions. GPT-Realtime leads on both Pass@1 (0.600) and interruption avoidance (13.5%); Gemini Live 3.1 achieves the fastest task-completion latency (4.25s) but suffers the lowest turn-take rate (78.0%); and Ultravox, despite competitive tool selection, exhibits the highest interruption rate (47.9%). Across all systems, self-correction handling and multi-step reasoning under hard conditions remain the most consistent failure modes.
+      We introduce <strong>Full-Duplex-Bench-v3</strong>, a benchmark for evaluating spoken language models under naturalistic speech conditions and multi-step tool use. Unlike prior work, our dataset consists entirely of <em>real human audio</em> annotated for five disfluency categories, paired with scenarios requiring chained API calls across four task domains. We evaluate six model configurations&mdash;GPT-Realtime, Gemini Live 2.5, Gemini Live 3.1, Grok, Ultravox v0.7, and a Cascaded model&mdash;across accuracy, latency, and turn-taking dimensions. GPT-Realtime leads on both Pass@1 (0.600) and interruption avoidance (13.5%); Gemini Live 3.1 achieves the fastest task-completion latency (4.25s) but suffers the lowest turn-take rate (78.0%); and Ultravox, despite competitive tool selection, exhibits the highest interruption rate (47.9%). The Cascaded model achieves a perfect 100% turn-taking rate but suffers from higher latency. Across all systems, self-correction handling and multi-step reasoning under hard conditions remain the most consistent failure modes.
     </p>
   </div>
 </section>
@@ -90,7 +90,7 @@
 <section id="results" class="section section-alt">
   <div class="container">
     <h2 class="section-title">Main Results</h2>
-    <p class="section-desc">Overall performance and turn-taking metrics across all 5 systems. GPT-Realtime leads on accuracy; Gemini 3.1 on latency.</p>
+    <p class="section-desc">Overall performance and turn-taking metrics across all 6 systems. GPT-Realtime leads on accuracy; Gemini 3.1 on latency.</p>
 
     <div class="table-wrapper">
       <table class="results-table">
@@ -158,9 +158,19 @@
             <td>0.513</td>
             <td>0.510</td>
             <td>0.410</td>
-            <td class="best">96.0%</td>
+            <td>96.0%</td>
             <td>8.40s</td>
             <td>47.9%</td>
+          </tr>
+          <tr>
+            <td class="model-name"><span class="model-dot" style="--dot-color:#d4915e"></span>Cascaded</td>
+            <td>0.803</td>
+            <td>0.562</td>
+            <td>0.655</td>
+            <td>0.450</td>
+            <td class="best">100.0%</td>
+            <td>10.12s</td>
+            <td>33.0%</td>
           </tr>
         </tbody>
       </table>
