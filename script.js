@@ -5,6 +5,7 @@ const MODELS = [
   { name: 'Gemini 3.1',   color: '#4a6fa5' },
   { name: 'Grok',          color: '#6cc6a4' },
   { name: 'Ultravox',      color: '#9b8ec4' },
+  { name: 'Cascaded',      color: '#d4915e' },
 ];
 
 const DATA = {
@@ -16,6 +17,7 @@ const DATA = {
       [0.694, 0.588, 0.300],  // Gemini 3.1
       [0.583, 0.471, 0.200],  // Grok
       [0.556, 0.382, 0.267],  // Ultravox
+      [0.639, 0.441, 0.233],  // Cascaded
     ]
   },
   disfluency: {
@@ -26,6 +28,7 @@ const DATA = {
       [0.586, 0.500, 0.600, 0.583, 0.353],  // Gemini 3.1
       [0.483, 0.333, 0.500, 0.583, 0.294],  // Grok
       [0.414, 0.333, 0.500, 0.250, 0.353],  // Ultravox
+      [0.448, 0.444, 0.600, 0.500, 0.176],  // Cascaded
     ]
   },
   domain: {
@@ -36,6 +39,7 @@ const DATA = {
       [0.448, 0.920, 0.269, 0.550],  // Gemini 3.1
       [0.414, 0.760, 0.115, 0.450],  // Grok
       [0.345, 0.680, 0.192, 0.450],  // Ultravox
+      [0.414, 0.800, 0.192, 0.400],  // Cascaded
     ]
   },
   latency: {
