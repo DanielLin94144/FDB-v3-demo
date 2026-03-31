@@ -117,15 +117,15 @@ const PROVIDERS = [
 ];
 
 // ===================== RADAR DATA =====================
-const RADAR_AXES = ['Tool Sel', 'Arg Acc', 'Resp Qual', 'Pass@1', 'Turn-Take', 'Latency', 'Interrupt'];
+const RADAR_AXES = ['Tool Sel', 'Arg Acc', 'Resp Qual', 'Pass@1', 'Turn-Take', 'Latency', 'Interrupt', 'Filler'];
 
 const RADAR_RAW = [
-  { name: 'GPT-Realtime', vals: [0.876, 0.680, 0.792, 0.600, 0.960, 6.89, 0.135] },
-  { name: 'Gemini 2.5 Live', vals: [0.786, 0.593, 0.554, 0.490, 0.920, 7.26, 0.141] },
-  { name: 'Gemini 3.1 Live', vals: [0.817, 0.588, 0.718, 0.540, 0.780, 4.25, 0.192] },
-  { name: 'Grok', vals: [0.797, 0.542, 0.617, 0.430, 0.940, 6.65, 0.255] },
-  { name: 'Ultravox', vals: [0.794, 0.513, 0.510, 0.410, 0.960, 8.40, 0.479] },
-  { name: 'Cascaded', vals: [0.803, 0.562, 0.655, 0.450, 1.000, 10.12, 0.330] },
+  { name: 'GPT-Realtime', vals: [0.876, 0.680, 0.792, 0.600, 0.960, 6.89, 0.135, 0.169] },
+  { name: 'Gemini 2.5 Live', vals: [0.786, 0.593, 0.554, 0.490, 0.920, 7.26, 0.141, 0.089] },
+  { name: 'Gemini 3.1 Live', vals: [0.817, 0.588, 0.718, 0.540, 0.780, 4.25, 0.192, 0.317] },
+  { name: 'Grok', vals: [0.797, 0.542, 0.617, 0.430, 0.940, 6.65, 0.255, 0.443] },
+  { name: 'Ultravox', vals: [0.794, 0.513, 0.510, 0.410, 0.960, 8.40, 0.479, 0.880] },
+  { name: 'Cascaded', vals: [0.803, 0.562, 0.655, 0.450, 1.000, 10.12, 0.330, 0.269] },
 ];
 
 function normalizeRadar(vals) {
@@ -137,6 +137,7 @@ function normalizeRadar(vals) {
     vals[4],
     1 - (vals[5] / 12),
     1 - vals[6],
+    1 - vals[7],
   ];
 }
 
