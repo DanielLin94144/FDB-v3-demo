@@ -38,7 +38,7 @@
   <div class="container narrow">
     <h2 class="section-title">Abstract</h2>
     <p class="abstract-text">
-      We introduce <strong>Full-Duplex-Bench-v3</strong>, a benchmark for evaluating spoken language models under naturalistic speech conditions and multi-step tool use. Unlike prior work, our dataset consists entirely of <em>real human audio</em> annotated for five disfluency categories, paired with scenarios requiring chained API calls across four task domains. We evaluate seven model configurations&mdash;GPT-Realtime, Gemini 2.5 Live, Gemini 3.1 Live, Grok, Nova Sonic 2, Ultravox v0.7, and a Cascaded baseline&mdash;across accuracy, latency, and turn-taking dimensions. No single system dominates: GPT-Realtime leads on Pass@1 (0.525); Gemini 2.5 Live on task-completion latency (5.68s); and Gemini 3.1 Live on turn-taking discipline (15.0% interruption rate, 99.0% turn-take rate). Across all systems, self-correction handling and multi-step reasoning under hard conditions remain the most consistent failure modes.
+      We introduce <strong>Full-Duplex-Bench-v3</strong>, a benchmark for evaluating spoken language models under naturalistic speech conditions and multi-step tool use. Unlike prior work, our dataset consists entirely of <em>real human audio</em> annotated for five disfluency categories, paired with scenarios requiring chained API calls across four task domains. We evaluate five model configurations&mdash;GPT-Realtime, Gemini Live 2.5, Gemini Live 3.1, Grok, and Ultravox v0.7&mdash;across accuracy, latency, and turn-taking dimensions. GPT-Realtime leads on both Pass@1 (0.600) and interruption avoidance (13.5%); Gemini Live 3.1 achieves the fastest task-completion latency (4.25s) but suffers the lowest turn-take rate (78.0%); and Ultravox, despite competitive tool selection, exhibits the highest interruption rate (47.9%). Across all systems, self-correction handling and multi-step reasoning under hard conditions remain the most consistent failure modes.
     </p>
   </div>
 </section>
@@ -76,7 +76,7 @@
 <section id="radar" class="section">
   <div class="container">
     <h2 class="section-title">Model Comparison</h2>
-    <p class="section-desc">Performance profile across 6 dimensions. Click legend to toggle models.</p>
+    <p class="section-desc">Performance profile across 7 dimensions. Click legend to toggle models.</p>
     <div class="radar-wrapper">
       <canvas id="radar-canvas"></canvas>
       <div class="radar-legend" id="radar-legend">
@@ -90,7 +90,7 @@
 <section id="results" class="section section-alt">
   <div class="container">
     <h2 class="section-title">Main Results</h2>
-    <p class="section-desc">Overall performance and turn-taking metrics across all 7 systems. No single model dominates all dimensions.</p>
+    <p class="section-desc">Overall performance and turn-taking metrics across all 5 systems. GPT-Realtime leads on accuracy; Gemini 3.1 on latency.</p>
 
     <div class="table-wrapper">
       <table class="results-table">
@@ -104,6 +104,7 @@
             <th>Model</th>
             <th>Tool Sel &uarr;</th>
             <th>Arg Acc &uarr;</th>
+            <th>Resp Qual &uarr;</th>
             <th>Pass@1 &uarr;</th>
             <th>Turn-take &uarr;</th>
             <th>Latency &darr;</th>
@@ -113,66 +114,53 @@
         <tbody>
           <tr>
             <td class="model-name"><span class="model-dot" style="--dot-color:#e8646a"></span>GPT-Realtime</td>
-            <td class="best">0.818</td>
-            <td class="best">0.597</td>
-            <td class="best">0.525</td>
-            <td>96.0%</td>
-            <td>6.72s</td>
-            <td>20.6%</td>
+            <td class="best">0.876</td>
+            <td class="best">0.680</td>
+            <td class="best">0.792</td>
+            <td class="best">0.600</td>
+            <td class="best">96.0%</td>
+            <td>6.89s</td>
+            <td class="best">13.5%</td>
           </tr>
           <tr>
             <td class="model-name"><span class="model-dot" style="--dot-color:#6ba3d6"></span>Gemini 2.5 Live</td>
-            <td>0.801</td>
-            <td>0.553</td>
-            <td>0.446</td>
-            <td>94.1%</td>
-            <td class="best">5.68s</td>
-            <td>20.0%</td>
+            <td>0.786</td>
+            <td>0.593</td>
+            <td>0.554</td>
+            <td>0.490</td>
+            <td>92.0%</td>
+            <td>7.26s</td>
+            <td>14.1%</td>
           </tr>
           <tr>
             <td class="model-name"><span class="model-dot" style="--dot-color:#4a6fa5"></span>Gemini 3.1 Live</td>
-            <td>0.810</td>
-            <td>0.594</td>
-            <td>0.485</td>
-            <td>99.0%</td>
-            <td>7.56s</td>
-            <td class="best">15.0%</td>
-          </tr>
-          <tr>
-            <td class="model-name"><span class="model-dot" style="--dot-color:#f0a856"></span>Nova Sonic 2</td>
-            <td>0.725</td>
-            <td>0.493</td>
-            <td>0.356</td>
-            <td>92.1%</td>
-            <td>8.24s</td>
-            <td>22.6%</td>
+            <td>0.817</td>
+            <td>0.588</td>
+            <td>0.718</td>
+            <td>0.540</td>
+            <td>78.0%</td>
+            <td class="best">4.25s</td>
+            <td>19.2%</td>
           </tr>
           <tr>
             <td class="model-name"><span class="model-dot" style="--dot-color:#6cc6a4"></span>Grok</td>
-            <td>0.695</td>
-            <td>0.474</td>
-            <td>0.376</td>
-            <td>86.1%</td>
-            <td>8.10s</td>
-            <td>16.1%</td>
+            <td>0.797</td>
+            <td>0.542</td>
+            <td>0.617</td>
+            <td>0.430</td>
+            <td>94.0%</td>
+            <td>6.65s</td>
+            <td>25.5%</td>
           </tr>
           <tr>
             <td class="model-name"><span class="model-dot" style="--dot-color:#9b8ec4"></span>Ultravox</td>
-            <td>0.814</td>
-            <td>0.592</td>
-            <td>0.485</td>
-            <td class="best">100.0%</td>
-            <td>9.34s</td>
-            <td>22.8%</td>
-          </tr>
-          <tr>
-            <td class="model-name"><span class="model-dot" style="--dot-color:#8eccc8"></span>Cascaded</td>
-            <td>0.736</td>
-            <td>0.483</td>
-            <td>0.406</td>
-            <td>93.1%</td>
-            <td>8.84s</td>
-            <td>27.7%</td>
+            <td>0.794</td>
+            <td>0.513</td>
+            <td>0.510</td>
+            <td>0.410</td>
+            <td class="best">96.0%</td>
+            <td>8.40s</td>
+            <td>47.9%</td>
           </tr>
         </tbody>
       </table>
@@ -194,7 +182,7 @@
 
     <!-- Difficulty Tab -->
     <div class="tab-content active" id="tab-difficulty">
-      <p class="chart-desc">Pass@1 performance degrades with scenario complexity. GPT-Realtime maintains the lead across all tiers.</p>
+      <p class="chart-desc">Pass@1 performance degrades with scenario complexity. GPT-Realtime leads decisively (0.750 Easy, 0.433 Hard); Grok shows the steepest decline (0.200 Hard).</p>
       <div class="bar-chart-container">
         <div class="bar-chart" id="chart-difficulty"></div>
       </div>
@@ -202,7 +190,7 @@
 
     <!-- Disfluency Tab -->
     <div class="tab-content" id="tab-disfluency">
-      <p class="chart-desc">Self-correction remains the hardest disfluency type&mdash;even the best model (Gemini 2.5) succeeds on only 52.9% of rollback scenarios.</p>
+      <p class="chart-desc">Self-correction remains the hardest disfluency type&mdash;even the best model (GPT-Realtime) succeeds on only 58.8% of rollback scenarios.</p>
       <div class="bar-chart-container">
         <div class="bar-chart" id="chart-disfluency"></div>
       </div>
@@ -210,7 +198,7 @@
 
     <!-- Domain Tab -->
     <div class="tab-content" id="tab-domain">
-      <p class="chart-desc">Finance is easiest across all models; Housing consistently proves the most challenging domain.</p>
+      <p class="chart-desc">Finance is the strongest domain (GPT-Realtime: 0.960); Housing is consistently the hardest (best: 0.308). GPT-Realtime leads all four domains.</p>
       <div class="bar-chart-container">
         <div class="bar-chart" id="chart-domain"></div>
       </div>

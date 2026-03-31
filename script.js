@@ -3,59 +3,49 @@ const MODELS = [
   { name: 'GPT-Realtime', color: '#e8646a' },
   { name: 'Gemini 2.5',   color: '#6ba3d6' },
   { name: 'Gemini 3.1',   color: '#4a6fa5' },
-  { name: 'Nova Sonic 2',  color: '#f0a856' },
   { name: 'Grok',          color: '#6cc6a4' },
   { name: 'Ultravox',      color: '#9b8ec4' },
-  { name: 'Cascaded',      color: '#8eccc8' },
 ];
 
 const DATA = {
   difficulty: {
     categories: ['Easy', 'Medium', 'Hard'],
     values: [
-      [0.667, 0.486, 0.400],  // GPT
-      [0.556, 0.371, 0.400],  // Gemini 2.5
-      [0.639, 0.400, 0.400],  // Gemini 3.1
-      [0.528, 0.314, 0.200],  // Nova Sonic
-      [0.500, 0.314, 0.300],  // Grok
-      [0.667, 0.420, 0.333],  // Ultravox
-      [0.611, 0.343, 0.233],  // Cascaded
+      [0.750, 0.588, 0.433],  // GPT-Realtime
+      [0.667, 0.500, 0.267],  // Gemini 2.5
+      [0.694, 0.588, 0.300],  // Gemini 3.1
+      [0.583, 0.471, 0.200],  // Grok
+      [0.556, 0.382, 0.267],  // Ultravox
     ]
   },
   disfluency: {
     categories: ['Filler', 'Pause', 'Hesitation', 'False Start', 'Self-Corr'],
     values: [
-      [0.552, 0.333, 0.500, 0.583, 0.353],
-      [0.483, 0.389, 0.500, 0.500, 0.529],
-      [0.483, 0.556, 0.600, 0.583, 0.353],
-      [0.379, 0.333, 0.500, 0.500, 0.176],
-      [0.414, 0.333, 0.300, 0.500, 0.294],
-      [0.517, 0.500, 0.600, 0.583, 0.235],
-      [0.448, 0.389, 0.600, 0.417, 0.176],
+      [0.621, 0.556, 0.700, 0.667, 0.588],  // GPT-Realtime
+      [0.621, 0.444, 0.600, 0.417, 0.471],  // Gemini 2.5
+      [0.586, 0.500, 0.600, 0.583, 0.353],  // Gemini 3.1
+      [0.483, 0.333, 0.500, 0.583, 0.294],  // Grok
+      [0.414, 0.333, 0.500, 0.250, 0.353],  // Ultravox
     ]
   },
   domain: {
     categories: ['Ecommerce', 'Finance', 'Housing', 'Travel'],
     values: [
-      [0.552, 0.840, 0.192, 0.524],
-      [0.483, 0.720, 0.192, 0.381],
-      [0.483, 0.640, 0.308, 0.524],
-      [0.345, 0.640, 0.115, 0.444],
-      [0.414, 0.520, 0.154, 0.429],
-      [0.310, 0.600, 0.154, 0.429],
-      [0.310, 0.560, 0.115, 0.286],
+      [0.552, 0.960, 0.308, 0.600],  // GPT-Realtime
+      [0.483, 0.760, 0.231, 0.500],  // Gemini 2.5
+      [0.448, 0.920, 0.269, 0.550],  // Gemini 3.1
+      [0.414, 0.760, 0.115, 0.450],  // Grok
+      [0.345, 0.680, 0.192, 0.450],  // Ultravox
     ]
   },
   latency: {
     categories: ['First Word (s)', 'Tool Call (s)', 'Task Completion (s)'],
     values: [
-      [5.61, 4.45, 6.72],
-      [5.26, 4.77, 5.68],
-      [7.56, 3.51, 8.64],
-      [7.29, 2.83, 8.72],
-      [7.63, 4.02, 8.75],
-      [7.79, 4.41, 9.34],
-      [7.80, 4.24, 8.84],
+      [6.36, 3.89, 6.89],  // GPT-Realtime
+      [7.03, 4.61, 7.26],  // Gemini 2.5
+      [3.95, 2.21, 4.25],  // Gemini 3.1
+      [5.97, 0.63, 6.65],  // Grok
+      [3.88, 6.01, 8.40],  // Ultravox
     ]
   }
 };
@@ -116,23 +106,19 @@ const PROVIDERS = [
   { key: 'openai',     label: 'GPT-Realtime',  color: '#e8646a' },
   { key: 'google',     label: 'Gemini 2.5',     color: '#6ba3d6' },
   { key: 'gemini3_1',  label: 'Gemini 3.1',     color: '#4a6fa5' },
-  { key: 'nova_sonic', label: 'Nova Sonic 2',   color: '#f0a856' },
   { key: 'xai',        label: 'Grok',           color: '#6cc6a4' },
   { key: 'ultravox',   label: 'Ultravox',       color: '#9b8ec4' },
-  { key: 'cascaded',   label: 'Cascaded',       color: '#8eccc8' },
 ];
 
 // ===================== RADAR DATA =====================
-const RADAR_AXES = ['Tool Sel', 'Arg Acc', 'Pass@1', 'Turn-Take', 'Latency', 'Interrupt'];
+const RADAR_AXES = ['Tool Sel', 'Arg Acc', 'Resp Qual', 'Pass@1', 'Turn-Take', 'Latency', 'Interrupt'];
 
 const RADAR_RAW = [
-  { name: 'GPT-Realtime',    vals: [0.818, 0.597, 0.525, 0.960, 6.72, 0.206] },
-  { name: 'Gemini 2.5 Live', vals: [0.801, 0.553, 0.446, 0.941, 5.68, 0.200] },
-  { name: 'Gemini 3.1 Live', vals: [0.810, 0.594, 0.485, 0.990, 7.56, 0.150] },
-  { name: 'Nova Sonic 2',    vals: [0.725, 0.493, 0.356, 0.921, 8.24, 0.226] },
-  { name: 'Grok',            vals: [0.695, 0.474, 0.376, 0.861, 8.10, 0.161] },
-  { name: 'Ultravox',        vals: [0.814, 0.592, 0.485, 1.000, 9.34, 0.228] },
-  { name: 'Cascaded',        vals: [0.736, 0.483, 0.406, 0.931, 8.84, 0.277] },
+  { name: 'GPT-Realtime',    vals: [0.876, 0.680, 0.792, 0.600, 0.960, 6.89, 0.135] },
+  { name: 'Gemini 2.5 Live', vals: [0.786, 0.593, 0.554, 0.490, 0.920, 7.26, 0.141] },
+  { name: 'Gemini 3.1 Live', vals: [0.817, 0.588, 0.718, 0.540, 0.780, 4.25, 0.192] },
+  { name: 'Grok',            vals: [0.797, 0.542, 0.617, 0.430, 0.940, 6.65, 0.255] },
+  { name: 'Ultravox',        vals: [0.794, 0.513, 0.510, 0.410, 0.960, 8.40, 0.479] },
 ];
 
 function normalizeRadar(vals) {
@@ -141,13 +127,14 @@ function normalizeRadar(vals) {
     vals[1],
     vals[2],
     vals[3],
-    1 - (vals[4] / 12),
-    1 - vals[5],
+    vals[4],
+    1 - (vals[5] / 12),
+    1 - vals[6],
   ];
 }
 
 // Track which models are visible
-let radarVisible = [true, true, true, true, true, true, true];
+let radarVisible = [true, true, true, true, true];
 
 // ===================== CHART RENDERING =====================
 function renderGroupedBarChart(containerId, data, maxValue, isLatency = false) {
