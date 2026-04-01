@@ -36,22 +36,11 @@
     </div>
   </section>
 
-  <!-- ===================== ABSTRACT ===================== -->
-  <section id="abstract" class="section">
-    <div class="container narrow">
-      <h2 class="section-title">Abstract</h2>
-      <p class="abstract-text">
-        We introduce <strong>Full-Duplex-Bench-v3</strong>, a benchmark for evaluating spoken language models under
-        naturalistic speech conditions and multi-step tool use. Unlike prior work, our dataset consists entirely of
-        <em>real human audio</em> annotated for five disfluency categories, paired with scenarios requiring chained API
-        calls across four task domains. We evaluate six model configurations&mdash;GPT-Realtime, Gemini Live 2.5, Gemini
-        Live 3.1, Grok, Ultravox v0.7, and a Cascaded model&mdash;across accuracy, latency, and turn-taking dimensions.
-        GPT-Realtime leads on both Pass@1 (0.600) and interruption avoidance (13.5%); Gemini Live 3.1 achieves the
-        fastest task-completion latency (4.25s) but suffers the lowest turn-take rate (78.0%); and Ultravox, despite
-        competitive tool selection, exhibits the highest interruption rate (47.9%). The Cascaded model achieves a
-        perfect 100% turn-taking rate but suffers from higher latency. Across all systems, self-correction handling and
-        multi-step reasoning under hard conditions remain the most consistent failure modes.
-      </p>
+  <!-- ===================== OVERVIEW FIGURE ===================== -->
+  <section id="overview" class="section">
+    <div class="container">
+      <h2 class="section-title">Overview</h2>
+      <img src="FDBv3.drawio.png" alt="Full-Duplex-Bench-v3 Overview" style="width:100%; max-width:1200px; display:block; margin:0 auto;" />
     </div>
   </section>
 
