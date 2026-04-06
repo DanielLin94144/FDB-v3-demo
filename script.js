@@ -518,3 +518,20 @@ document.addEventListener('DOMContentLoaded', () => {
   initFloatingNav();
   initScrollAnimations();
 });
+
+// ===================== BIBTEX COPY =====================
+(function() {
+  const btn = document.getElementById('bibtex-copy-btn');
+  const code = document.getElementById('bibtex-code');
+  if (!btn || !code) return;
+  btn.addEventListener('click', () => {
+    navigator.clipboard.writeText(code.innerText).then(() => {
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.textContent = 'Copy';
+        btn.classList.remove('copied');
+      }, 1600);
+    });
+  });
+})();
